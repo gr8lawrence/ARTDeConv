@@ -53,7 +53,7 @@ mu_Theta <- function(Y, s, P, Theta_0, Delta, Delta_c, Theta_old, m, n, alpha1, 
 #' @param s_old the "cell size" vector before the update
 #' @param P the proportions matrix (assumed fixed here)
 #' 
-#' @return the "cell size" vector of length $K$ after the update
+#' @return the "cell size" vector of length \eqn{K} after the update
 
 mu_s <- function(Y, Theta, s_old, P) {
   k = ncol(Theta)
@@ -64,17 +64,3 @@ mu_s <- function(Y, Theta, s_old, P) {
   s_new = c(u * s_old / (V %*% s_old)) # updating by minimizing the surrogate function
   return(s_new)
 }
-
-# for testing
-# A = matrix(1:6, 2, 3)
-# B = matrix(7:12, 2, 3)
-# s_old = c(1, 1)
-# k = 2
-# Z_ls = lapply(seq_len(k), function(i) outer(A[, i], B[i, ]))
-# V2 = matrix(0, k, k)
-# for (ii in seq_len(k)) {
-#   for (jj in ii:k) {
-#     V2[ii, jj] = V2[jj, ii] = sum(Z_ls[[ii]] * Z_ls[[jj]])
-#   }
-# }
-# V2 should be the same as V

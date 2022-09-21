@@ -2,7 +2,7 @@
 % Please edit documentation in R/artdeconv.R
 \name{artdeconv}
 \alias{artdeconv}
-\title{ARTdeConv function for adaptive regularized tri-factor NMF deconvolution}
+\title{Adaptive regularized tri-factor NMF deconvolution}
 \usage{
 artdeconv(
   Y,
@@ -22,15 +22,15 @@ artdeconv(
 \arguments{
 \item{Y}{the bulk matrix}
 
-\item{Theta_0}{$M_0 \times K_0$ reference matrix for the fixed part of the signature matrix}
+\item{Theta_0}{\eqn{m_0 \times K_0} reference matrix for the fixed part of the signature matrix}
 
 \item{m0}{the number of signature genes for well characterized cell types in a tissue}
 
 \item{k0}{the number of well characterized cell types in a tissue}
 
-\item{meds}{a vector of length $K$ of pre-specified medians of cell proportions}
+\item{meds}{a vector of length \eqn{K} of pre-specified medians of cell proportions}
 
-\item{ranges}{a vector of length $K$ of pre-specified ranges of cell-type proportions (1/ranges as weights for regularization parameters)}
+\item{ranges}{a vector of length \eqn{K} of pre-specified ranges of cell-type proportions (1/\code{ranges} is used as weights for regularization parameters)}
 
 \item{alpha1}{the tuning parameter for regularizing the known part of Theta}
 
@@ -40,7 +40,7 @@ artdeconv(
 
 \item{n_start}{an integer indicating the number of restarts of the algorithm; default value is 10}
 
-\item{parallel}{a logical value}
+\item{parallel}{a logical value indicating whether or not to run \code{\link[=artdeconv]{artdeconv()}} in parallel; default is \code{TRUE}}
 
 \item{...}{other parameters that can be passed to the function (see \code{\link[=artdeconv_single_solve]{artdeconv_single_solve()}})}
 }

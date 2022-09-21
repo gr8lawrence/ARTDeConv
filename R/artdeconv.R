@@ -3,19 +3,19 @@
 #' This is an artdeconv function on a single run. 
 #' 
 #' @param Y the bulk matrix
-#' @param Theta_0 $M_0 \times K_0$ reference matrix for the fixed part of the signature matrix
+#' @param Theta_0 \eqn{m_0 \times K_0} reference matrix for the fixed part of the signature matrix
 #' @param Theta_it the initial value of the signature matrix
 #' @param s_it the initial value of the "cell size" vector
 #' @param P_it the initial value of the proportions matrix
 #' @param m0 the number of signature genes for well characterized cell types in a tissue
 #' @param k0 the number of well characterized cell types in a tissue
-#' @param meds a vector of length $K$ of pre-specified medians of cell proportions 
-#' @param ranges a vector of length $K$ of pre-specified ranges of cell-type proportions (1/ranges as weights for regularization parameters)
+#' @param meds a vector of length \eqn{K} of pre-specified medians of cell proportions 
+#' @param ranges a vector of length \eqn{K} of pre-specified ranges of cell-type proportions (1/ranges as weights for regularization parameters)
 #' @param alpha1 the tuning parameter for regularizing the known part of Theta
 #' @param alpha2 the tuning parameter for regularizing the unknown part of Theta
 #' @param beta the tuning parameter for regularizing P
-#' @param max_iter the maximal number of iterations the algorithm shall perform; default value is $10^5$
-#' @param tol tolerance for convergence indication; default value is $10^{-6}$
+#' @param max_iter the maximal number of iterations the algorithm shall perform; default value is \eqn{10^5}
+#' @param tol tolerance for convergence indication; default value is \eqn{10^{-6}}
 #' 
 #' @return A list with following items
 #' \itemize{
@@ -96,21 +96,21 @@ artdeconv_single_solve <- function(Y, Theta_0, Theta_it, s_it, P_it, m, n, k, m0
               n_iter = t - 1))
 }
 
-#' ARTdeConv function for adaptive regularized tri-factor NMF deconvolution
+#' Adaptive regularized tri-factor NMF deconvolution
 #' 
 #' TODO: write a complete description of the package
 #' 
 #' @param Y the bulk matrix
-#' @param Theta_0 $M_0 \times K_0$ reference matrix for the fixed part of the signature matrix
+#' @param Theta_0 \eqn{m_0 \times K_0} reference matrix for the fixed part of the signature matrix
 #' @param m0 the number of signature genes for well characterized cell types in a tissue
 #' @param k0 the number of well characterized cell types in a tissue
-#' @param meds a vector of length $K$ of pre-specified medians of cell proportions 
-#' @param ranges a vector of length $K$ of pre-specified ranges of cell-type proportions (1/ranges as weights for regularization parameters)
+#' @param meds a vector of length \eqn{K} of pre-specified medians of cell proportions 
+#' @param ranges a vector of length \eqn{K} of pre-specified ranges of cell-type proportions (1/`ranges` is used as weights for regularization parameters)
 #' @param alpha1 the tuning parameter for regularizing the known part of Theta
 #' @param alpha2 the tuning parameter for regularizing the unknown part of Theta
 #' @param beta the tuning parameter for regularizing P
 #' @param n_start an integer indicating the number of restarts of the algorithm; default value is 10
-#' @param parallel a logical value
+#' @param parallel a logical value indicating whether or not to run [artdeconv()] in parallel; default is `TRUE` 
 #' @param ... other parameters that can be passed to the function (see [artdeconv_single_solve()])
 #' 
 #' @seealso [artdeconv_single_solve()]

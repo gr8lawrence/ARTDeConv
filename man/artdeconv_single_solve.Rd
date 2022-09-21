@@ -28,7 +28,7 @@ artdeconv_single_solve(
 \arguments{
 \item{Y}{the bulk matrix}
 
-\item{Theta_0}{$M_0 \times K_0$ reference matrix for the fixed part of the signature matrix}
+\item{Theta_0}{\eqn{m_0 \times K_0} reference matrix for the fixed part of the signature matrix}
 
 \item{Theta_it}{the initial value of the signature matrix}
 
@@ -40,9 +40,9 @@ artdeconv_single_solve(
 
 \item{k0}{the number of well characterized cell types in a tissue}
 
-\item{meds}{a vector of length $K$ of pre-specified medians of cell proportions}
+\item{meds}{a vector of length \eqn{K} of pre-specified medians of cell proportions}
 
-\item{ranges}{a vector of length $K$ of pre-specified ranges of cell-type proportions (1/ranges as weights for regularization parameters)}
+\item{ranges}{a vector of length \eqn{K} of pre-specified ranges of cell-type proportions (1/ranges as weights for regularization parameters)}
 
 \item{alpha1}{the tuning parameter for regularizing the known part of Theta}
 
@@ -50,9 +50,9 @@ artdeconv_single_solve(
 
 \item{beta}{the tuning parameter for regularizing P}
 
-\item{max_iter}{the maximal number of iterations the algorithm shall perform; default value is $10^5$}
+\item{max_iter}{the maximal number of iterations the algorithm shall perform; default value is \eqn{10^5}}
 
-\item{tol}{tolerance for convergence indication; default value is $10^{-6}$}
+\item{tol}{tolerance for convergence indication; default value is \eqn{10^{-6}}}
 }
 \value{
 A list with following items

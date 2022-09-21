@@ -16,7 +16,7 @@ mu_s(Y, Theta, s_old, P)
 \item{P}{the proportions matrix (assumed fixed here)}
 }
 \value{
-the "cell size" vector of length $K$ after the update
+the "cell size" vector of length \eqn{K} after the update
 }
 \description{
 function to update the size vector through multiplicative update
