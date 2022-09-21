@@ -5,6 +5,7 @@
 #' @param Y the bulk matrix
 #' @param Theta_0 $M_0 \times K_0$ reference matrix for the fixed part of the signature matrix
 #' @param Theta_it the initial value of the signature matrix
+#' @param s_it the initial value of the "cell size" vector
 #' @param P_it the initial value of the proportions matrix
 #' @param m0 the number of signature genes for well characterized cell types in a tissue
 #' @param k0 the number of well characterized cell types in a tissue
@@ -13,13 +14,19 @@
 #' @param alpha1 the tuning parameter for regularizing the known part of Theta
 #' @param alpha2 the tuning parameter for regularizing the unknown part of Theta
 #' @param beta the tuning parameter for regularizing P
-#' @param max_iter thee maximal number of iterations the algorithm shall perform; default value is $10^5$
+#' @param max_iter the maximal number of iterations the algorithm shall perform; default value is $10^5$
 #' @param tol tolerance for convergence indication; default value is $10^{-6}$
 #' 
-#' @return 
+#' @return A list with following items
+#' \itemize{
+#' \item{Y_hat the estimated Y from the product of estimated factors}
+#' \item{Theta_hat the estimated signature matrix from deconvolution}
+#' \item{s_hat the estimated "cell size" vector from deconvolution}
+#' \item{P_hat the estimated Theta from deconvolution}
+#' }
+#' 
+#' @export
 
-## IN: 
-## 
 artdeconv_single_solve <- function(Y, Theta_0, Theta_it, s_it, P_it, m, n, k, m0, k0, meds, ranges, alpha1, alpha2, beta, max_iter = 1e5, tol = 1e-6, fixed_s = FALSE) {
   ## get the initial Y norm
   Y_norm = norm(Y, type = "F")
@@ -89,8 +96,34 @@ artdeconv_single_solve <- function(Y, Theta_0, Theta_it, s_it, P_it, m, n, k, m0
               n_iter = t - 1))
 }
 
-# The main function that includes restarts (does not include tuning)
-artdeconv <- function(Y, Theta_0, m0, k0, meds, ranges, alpha1, alpha2, beta, n_start = 1, parallel = TRUE, ...) {
+#' ARTdeConv function for adaptive regularized tri-factor NMF deconvolution
+#' 
+#' TODO: write a complete description of the package
+#' 
+#' @param Y the bulk matrix
+#' @param Theta_0 $M_0 \times K_0$ reference matrix for the fixed part of the signature matrix
+#' @param m0 the number of signature genes for well characterized cell types in a tissue
+#' @param k0 the number of well characterized cell types in a tissue
+#' @param meds a vector of length $K$ of pre-specified medians of cell proportions 
+#' @param ranges a vector of length $K$ of pre-specified ranges of cell-type proportions (1/ranges as weights for regularization parameters)
+#' @param alpha1 the tuning parameter for regularizing the known part of Theta
+#' @param alpha2 the tuning parameter for regularizing the unknown part of Theta
+#' @param beta the tuning parameter for regularizing P
+#' @param n_start an integer indicating the number of restarts of the algorithm; default value is 10
+#' @param parallel a logical value
+#' @param ... other parameters that can be passed to the function (see [artdeconv_single_solve()])
+#' 
+#' @seealso [artdeconv_single_solve()]
+#' 
+#' @return A list with following items
+#' * Y_hat: the estimated Y from the product of estimated factors
+#' * Theta_hat: the estimated signature matrix from deconvolution
+#' * s_hat: the estimated "cell size" vector from deconvolution
+#' * P_hat the estimated Theta from deconvolution
+#' 
+#' @importFrom foreach foreach
+#' @export
+artdeconv <- function(Y, Theta_0, m0, k0, meds, ranges, alpha1, alpha2, beta, n_start = 10, parallel = TRUE, ...) {
   ## parameters
   m = nrow(Y)
   n = ncol(Y)
@@ -98,13 +131,8 @@ artdeconv <- function(Y, Theta_0, m0, k0, meds, ranges, alpha1, alpha2, beta, n_
   
   ## the parallel version 
   if (parallel) {
-    ## load required packages
-    require(doParallel)
-    require(foreach)
-    
     ## run all restarts in parallel
-    # registerDoParallel(4)
-    rl = foreach(i = seq_len(n_start)) %dopar% {
+    rl = foreach::foreach(i = seq_len(n_start)) %dopar% {
       initials = get_initials(Y, Theta_0, meds, m, n, k, m0, k0)
       Theta_it = initials$Theta
       s_it = initials$s
@@ -112,7 +140,6 @@ artdeconv <- function(Y, Theta_0, m0, k0, meds, ranges, alpha1, alpha2, beta, n_
       mu_res = artdeconv_single_solve(Y, Theta_0, Theta_it, s_it, P_it, m, n, k, m0, k0, meds, ranges, alpha1, alpha2, beta, ...)
       mu_res
     }
-    # registerDoSEQ()
   } else {
     ## a list to save all results
     rl = vector('list', n_start)
