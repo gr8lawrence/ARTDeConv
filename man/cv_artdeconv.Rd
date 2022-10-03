@@ -17,6 +17,7 @@ cv_artdeconv(
   n_fold = 5,
   n_start = 10,
   parallel = TRUE,
+  verbose = TRUE,
   ...
 )
 }
@@ -44,6 +45,8 @@ cv_artdeconv(
 \item{n_start}{the number of restart for ARTdeConv in each cross validation fold; default is 10}
 
 \item{parallel}{a logical value of whether to run ARTdeConv in parallel; default is \code{TRUE}}
+
+\item{verbose}{a logical value: if \code{TRUE}, will print a message of all optimal tuning parameters after the cross validaiton is done; default is \code{TRUE}}
 
 \item{...}{other parameters for the \link{artdeconv} function}
 }

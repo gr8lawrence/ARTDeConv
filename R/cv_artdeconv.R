@@ -12,6 +12,7 @@
 #' @param n_fold the number of folds of the cross validation; default is 5
 #' @param n_start the number of restart for ARTdeConv in each cross validation fold; default is 10
 #' @param parallel a logical value of whether to run ARTdeConv in parallel; default is `TRUE`
+#' @param verbose a logical value: if `TRUE`, will print a message of all optimal tuning parameters after the cross validaiton is done; default is `TRUE`
 #' @param ... other parameters for the [artdeconv] function
 #' 
 #' @importFrom nnls nnls
@@ -20,7 +21,7 @@
 #' 
 #' @export
 
-cv_artdeconv <- function(Y, Theta_0, m0, k0, meds, ranges, alpha1_range, alpha2_range, beta_range, n_fold = 5, n_start = 10, parallel = TRUE, ...) {
+cv_artdeconv <- function(Y, Theta_0, m0, k0, meds, ranges, alpha1_range, alpha2_range, beta_range, n_fold = 5, n_start = 10, parallel = TRUE, verbose = TRUE, ...) {
   ## get the dimensions from input matrices
   m = nrow(Y)
   n = ncol(Y)
@@ -55,10 +56,10 @@ cv_artdeconv <- function(Y, Theta_0, m0, k0, meds, ranges, alpha1_range, alpha2_
   alpha1_best = tune_grid$alpha1[best_param_id]
   alpha2_best = tune_grid$alpha2[best_param_id]
   beta_best = tune_grid$beta[best_param_id]
-  message(paste('The best tuning parameters are alpha1 = ', alpha1_best,
-                ', alpha2 = ', alpha2_best,
-                ', beta = ', beta_best,
-                '; they can be extracted from the returned list object.'))
+  if (verbose) message(paste('The best tuning parameters are alpha1 = ', alpha1_best,
+                             ', alpha2 = ', alpha2_best,
+                             ', beta = ', beta_best,
+                             '; they can be extracted from the returned list object.'))
   return(list(alpha1 = alpha1_best,
               alpha2 = alpha2_best,
               beta = beta_best))
