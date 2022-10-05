@@ -3,5 +3,6 @@
 export(artdeconv)
 export(artdeconv_single_solve)
 export(cv_artdeconv)
+importFrom(foreach,"%dopar%")
 importFrom(foreach,foreach)
 importFrom(nnls,nnls)

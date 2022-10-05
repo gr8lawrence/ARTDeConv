@@ -122,6 +122,7 @@ artdeconv_single_solve <- function(Y, Theta_0, Theta_it, s_it, P_it, m, n, k, m0
 #' * P_hat the estimated Theta from deconvolution
 #' 
 #' @importFrom foreach foreach
+#' @importFrom foreach %dopar% 
 #' @export
 artdeconv <- function(Y, Theta_0, m0, k0, meds, ranges, alpha1, alpha2, beta, n_start = 10, parallel = TRUE, ...) {
   ## parameters
