@@ -28,6 +28,7 @@
 #' @export
 
 artdeconv_single_solve <- function(Y, Theta_0, Theta_it, s_it, P_it, m, n, k, m0, k0, meds, ranges, alpha1, alpha2, beta, max_iter = 1e5, tol = 1e-6, fixed_s = FALSE) {
+  ## get the initial 
   ## get the initial Y norm
   Y_norm = norm(Y, type = "F")
   ## get the Delta matrix
@@ -35,8 +36,9 @@ artdeconv_single_solve <- function(Y, Theta_0, Theta_it, s_it, P_it, m, n, k, m0
   Delta_c = 1 - Delta
   ## initiate the counter
   n_iter = 0
-  ## initiate a residual vector
+  ## initiate a residual and objective function vector
   res_v = vector()
+  obj_v = vector()
   ## initiate matrices
   Theta_old = Theta_it
   if (fixed_s) {
@@ -47,38 +49,40 @@ artdeconv_single_solve <- function(Y, Theta_0, Theta_it, s_it, P_it, m, n, k, m0
   } 
   P_old = P_it
   Y_old = Theta_old %*% diag(s_old) %*% P_old 
-  ## set the initial delt_Y to inf and a vector for all delt_Y values
-  delt_Y = Inf
-  delt_v = vector()
+  obj_old = artdeconv_obj_fun(Y, Y_old, Theta_old, P_old, m, n, k, m0, k0, Theta_0, meds, ranges, alpha1, alpha2, beta)
+  ## set the initial delt_obj to inf and a vector for all objective function values
+  delt_obj = Inf
+  obj_v = vector()
   ## vectors for saving other norms to see convergence
   P_norms = vector()
   Y_norms = vector()
   ## start the loop
   for (t in seq_len(max_iter)) {
     ## if delt_Y gets under the tolerance, break out of the loop
-    if (delt_Y <= tol) break
+    if (delt_obj <= tol) break
     Theta_new = mu_Theta(Y, s_old, P_old, Theta_0, Delta, Delta_c, Theta_old, m, n, alpha1, alpha2)
     ## update P 
     P_new = mu_P(Y, Theta_new, s_old, meds, P_old, m, n, beta, ranges)
-    ## updating s depending on whether we want s to be fixed
-    if (!fixed_s) {
-      s_new = mu_s(Y, Theta_new, s_old, P_new)
-    } else {
-      s_new = s_old
-    }
+    ## updating s 
+    s_new = mu_s(Y, Theta_new, s_old, P_new)
+    # if (!fixed_s) {
+    #   s_new = mu_s(Y, Theta_new, s_old, P_new)
+    # } else {
+    #   s_new = s_old
+    # }
     ## calculating the updated Y
     Y_new = Theta_new %*% diag(s_new) %*% P_new
-    ## storing all needed results
-    P_norms[t] = norm(P_new, type = "F")
-    Y_norms[t] = Y_norm = norm(Y_new, type = "F")
-    res_v[t] = res_new = norm(Y_new - Y_old, type = "F")
-    ## calculating the convergence criterion
-    delt_v[t] = delt_Y = res_new/Y_norm
+    ## calculate the updated objective funtion and its change
+    obj_v[t] = obj_new = artdeconv_obj_fun(Y, Y_new, Theta_new, P_new, m, n, k, m0, k0, Theta_0, meds, ranges, alpha1, alpha2, beta)
+    delt_obj = abs(obj_new - obj_old)
+    ## storing all residuals of Y
+    res_v[t] = norm(Y_new - Y, type = "F")/sqrt(m * n)
     ## passing the updates to the next round
     Y_old = Y_new
     Theta_old = Theta_new
     s_old = s_new
     P_old = P_new
+    obj_old = obj_new
   }
   ## normalize the proportion matrix P so its row sums equal 1 
   P_new = apply(P_new, 2, function(x) x/sum(x))
@@ -88,9 +92,7 @@ artdeconv_single_solve <- function(Y, Theta_0, Theta_it, s_it, P_it, m, n, k, m0
               s_hat = s_new,
               P_hat = P_new,
               res_v = res_v,
-              delt_v = delt_v,
-              P_norms = P_norms,
-              Y_norms = Y_norms,
+              obj_v = obj_v,
               fixed_s = ifelse(fixed_s, 'size-fixed', 'size-free'),
               weights = ifelse(length(ranges) == 1, 'uniform', 'range-adaptive'),
               n_iter = t - 1))
