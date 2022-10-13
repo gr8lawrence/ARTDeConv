@@ -56,11 +56,10 @@ mu_Theta <- function(Y, s, P, Theta_0, Delta, Delta_c, Theta_old, m, n, alpha1, 
 #' @return the "cell size" vector of length \eqn{K} after the update
 
 mu_s <- function(Y, Theta, s_old, P) {
-  k = ncol(Theta)
-  G_ls = lapply(seq_len(k), function(i) outer(Theta[, i], P[i, ])) # a list of rank-1 outer products Z_i
-  u = sapply(G_ls, inner_product_TL, B = Y) # a vector of inner products between Y and Z_i
-  G_ls_vec = sapply(G_ls, c) # vectorize Z_i and put the vectors into a matrix
-  V = Reduce('+', lapply(seq_len(nrow(G_ls_vec)), function(i) outer(G_ls_vec[i, ], G_ls_vec[i, ]))) # sum over all outer products of the rows of the above matrix
-  s_new = c(u * s_old / (V %*% s_old)) # updating by minimizing the surrogate function
+  k <- ncol(Theta)
+  u <- vector(mode = 'double', length = k)
+  for (i in seq(k)) u[i] <- sum(outer(Theta[, i], P[i, ]) * Y)
+  V <- t(Theta) %*% Theta * P %*% t(P)
+  s_new <- c(u * s_old / (V %*% s_old)) # updating by minimizing the surrogate function
   return(s_new)
 }
