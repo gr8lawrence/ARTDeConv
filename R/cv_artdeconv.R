@@ -31,10 +31,9 @@ cv_artdeconv <- function(Y, Theta_0, m0, k0, meds, ranges, alpha1_range, alpha2_
   tune_grid$cv_error = NaN
   ## the loop for CV
   for (i in seq(nrow(tune_grid))) {
-    # i = 1
     a1 = tune_grid$alpha1[i]
     a2 = tune_grid$alpha2[i]
-    b = tune_grid$beta
+    b = tune_grid$beta[i]
     fold_id = sample(x = rep(seq(n_fold), ceiling(n/n_fold)), size = n) # assign fold id
     cv_error = 0 # initiate the CV error
     ## the loop to calculate total CV error for this param combination

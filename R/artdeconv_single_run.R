@@ -39,10 +39,10 @@ artdeconv_single_solve <- function(Y, Theta_0, Theta_it, s_it, P_it, m, n, k, m0
     message("s is fixed to be 1 for all its values")
     s_old = rep(1, k)
   } else {
-    s_old = s_it 
-  } 
+    s_old = s_it
+  }
   P_old = P_it
-  Y_old = Theta_old %*% diag(s_old) %*% P_old 
+  Y_old = Theta_old %*% diag(s_old) %*% P_old
   obj_old = artdeconv_obj_fun(Y, Y_old, Theta_old, P_old, m, n, k, m0, k0, Theta_0, meds, ranges, alpha1, alpha2, beta)
   ## set the initial delt_obj to inf and a vector for all objective function values
   delt_obj = Inf
@@ -54,9 +54,9 @@ artdeconv_single_solve <- function(Y, Theta_0, Theta_it, s_it, P_it, m, n, k, m0
     ## if delt_Y gets under the tolerance, break out of the loop
     if (delt_obj <= tol) break
     Theta_new = mu_Theta(Y, s_old, P_old, Theta_0, Delta, Delta_c, Theta_old, m, n, alpha1, alpha2)
-    ## update P 
+    ## update P
     P_new = mu_P(Y, Theta_new, s_old, meds, P_old, m, n, beta, ranges)
-    ## updating s 
+    ## updating s
     s_new = mu_s(Y, Theta_new, s_old, P_new)
     # if (!fixed_s) {
     #   s_new = mu_s(Y, Theta_new, s_old, P_new)
@@ -77,7 +77,7 @@ artdeconv_single_solve <- function(Y, Theta_0, Theta_it, s_it, P_it, m, n, k, m0
     P_old = P_new
     obj_old = obj_new
   }
-  ## normalize the proportion matrix P so its row sums equal 1 
+  ## normalize the proportion matrix P so its row sums equal 1
   P_new = apply(P_new, 2, function(x) x/sum(x))
   ## return the results
   return(list(Y_hat = Y_new,
@@ -90,3 +90,4 @@ artdeconv_single_solve <- function(Y, Theta_0, Theta_it, s_it, P_it, m, n, k, m0
               weights = ifelse(length(ranges) == 1, 'uniform', 'range-adaptive'),
               n_iter = t - 1))
 }
+
