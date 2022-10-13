@@ -29,6 +29,7 @@ cv_artdeconv <- function(Y, Theta_0, m0, k0, meds, ranges, alpha1_range, alpha2_
   ## get all parameter combinations
   tune_grid = expand.grid(alpha1 = alpha1_range, alpha2 = alpha2_range, beta = beta_range)
   tune_grid$cv_error = NaN
+  message('Begin cross validation...')
   ## the loop for CV
   for (i in seq(nrow(tune_grid))) {
     a1 = tune_grid$alpha1[i]
@@ -50,6 +51,7 @@ cv_artdeconv <- function(Y, Theta_0, m0, k0, meds, ranges, alpha1_range, alpha2_
     }
     tune_grid$cv_error[i] = cv_error/n_fold # assign the averaged CV error
   }
+  message('Finished cross validation...')
   ## return the best parameter
   best_param_id = which(tune_grid$cv_error == min(tune_grid$cv_error))
   alpha1_best = tune_grid$alpha1[best_param_id]
