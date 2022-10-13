@@ -27,18 +27,12 @@
 #' 
 #' @export
 
-artdeconv_single_solve <- function(Y, Theta_0, Theta_it, s_it, P_it, m, n, k, m0, k0, meds, ranges, alpha1, alpha2, beta, max_iter = 1e5, tol = 1e-6, fixed_s = FALSE) {
-  ## get the initial 
-  ## get the initial Y norm
-  Y_norm = norm(Y, type = "F")
+artdeconv_single_solve <- function(Y, Theta_0, Theta_it, s_it, P_it, m, n, k, m0, k0, meds, ranges, alpha1, alpha2, beta, max_iter = 1e5, tol = 1e-5, fixed_s = FALSE) {
   ## get the Delta matrix
   Delta = get_Delta(k, k0, m, m0)
   Delta_c = 1 - Delta
   ## initiate the counter
   n_iter = 0
-  ## initiate a residual and objective function vector
-  res_v = vector()
-  obj_v = vector()
   ## initiate matrices
   Theta_old = Theta_it
   if (fixed_s) {
@@ -52,10 +46,9 @@ artdeconv_single_solve <- function(Y, Theta_0, Theta_it, s_it, P_it, m, n, k, m0
   obj_old = artdeconv_obj_fun(Y, Y_old, Theta_old, P_old, m, n, k, m0, k0, Theta_0, meds, ranges, alpha1, alpha2, beta)
   ## set the initial delt_obj to inf and a vector for all objective function values
   delt_obj = Inf
+  ## initiate a residual and objective function vector
+  res_v = vector()
   obj_v = vector()
-  ## vectors for saving other norms to see convergence
-  P_norms = vector()
-  Y_norms = vector()
   ## start the loop
   for (t in seq_len(max_iter)) {
     ## if delt_Y gets under the tolerance, break out of the loop
