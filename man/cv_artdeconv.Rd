@@ -18,6 +18,7 @@ cv_artdeconv(
   n_start = 10,
   parallel = TRUE,
   verbose = TRUE,
+  seed = 100,
   ...
 )
 }
@@ -54,5 +55,5 @@ cv_artdeconv(
 Cross Validation Function For Finding Optimal Tuning Parameters For ARTdeConv
 }
 \seealso{
-\link{artdeconv}
+\link{artdeconv} \link{artdeconv_for_cv}
 }

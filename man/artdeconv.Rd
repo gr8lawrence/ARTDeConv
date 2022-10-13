@@ -57,5 +57,5 @@ A list with following items
 TODO: write a complete description of the package
 }
 \seealso{
-\code{\link[=artdeconv_single_solve]{artdeconv_single_solve()}}
+\link{artdeconv_single_solve}
 }

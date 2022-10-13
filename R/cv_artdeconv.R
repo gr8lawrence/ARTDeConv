@@ -17,51 +17,45 @@
 #' 
 #' @importFrom nnls nnls
 #' 
-#' @seealso [artdeconv]
+#' @seealso [artdeconv] [artdeconv_for_cv] 
 #' 
 #' @export
 
-cv_artdeconv <- function(Y, Theta_0, m0, k0, meds, ranges, alpha1_range, alpha2_range, beta_range, n_fold = 5, n_start = 10, parallel = TRUE, verbose = TRUE, ...) {
-  ## get the dimensions from input matrices
-  m = nrow(Y)
-  n = ncol(Y)
-  K = ncol(Theta_0)
+cv_artdeconv <- function(Y, Theta_0, m0, k0, meds, ranges, alpha1_range, alpha2_range, beta_range, n_fold = 5, n_start = 10, parallel = TRUE, verbose = TRUE, seed = 100, ...) {
+  set.seed(seed)
   ## get all parameter combinations
-  tune_grid = expand.grid(alpha1 = alpha1_range, alpha2 = alpha2_range, beta = beta_range)
-  tune_grid$cv_error = NaN
+  tune_grid <- expand.grid(alpha1 = alpha1_range, alpha2 = alpha2_range, beta = beta_range)
+  tune_grid$cv_error <- NaN
+  ## determine the fold ids
+  fold_id <- sample(x = rep(seq(n_fold), ceiling(ncol(Y)/n_fold)), size = ncol(Y)) # assign fold id
   message('Begin cross validation...')
   ## the loop for CV
   for (i in seq(nrow(tune_grid))) {
-    a1 = tune_grid$alpha1[i]
-    a2 = tune_grid$alpha2[i]
-    b = tune_grid$beta[i]
-    fold_id = sample(x = rep(seq(n_fold), ceiling(n/n_fold)), size = n) # assign fold id
-    cv_error = 0 # initiate the CV error
+    cv_error <- 0 # initiate the CV error
     ## the loop to calculate total CV error for this param combination
     for (j in seq(n_fold)) {
-      holdout_id = (fold_id == j) # locate the ids for the test set
-      Y_test = Y[, holdout_id] # the test set
-      Y_train = Y[, !holdout_id] # the training set
-      train_res = artdeconv(Y = Y_train, Theta_0 = Theta_0, m0 = m0, k0 = k0, meds = meds, ranges = ranges, alpha1 = a1, alpha2 = a2, beta = b, n_start = n_start, parallel = parallel, ...)
-      Theta_train = train_res$Theta_hat
-      s_train = train_res$s_hat
-      G_train = Theta_train %*% diag(s_train)
-      P_test = apply(Y_test, 2, function(bb) {nnls::nnls(A = G_train, b = bb)$x}) # get P_test using NNLS since it and P_train share the same Theta and s
-      cv_error = cv_error + norm(Y_test - G_train %*% P_test, type = 'F')^2
+      holdout_id <- (fold_id == j) # locate the ids for the test set
+      Y_test <- Y[, holdout_id] # the test set
+      Y_train <- Y[, !holdout_id] # the training set
+      train_res <- artdeconv_for_cv(Y = Y_train, Theta_0 = Theta_0, m0 = m0, k0 = k0, meds = meds, ranges = ranges, alpha1 = tune_grid$alpha1[i], alpha2 = tune_grid$alpha2[i], beta = tune_grid$beta[i], n_start = n_start, parallel = parallel, ...)
+      G_train <- train_res$Theta_hat %*% diag(train_res$s_hat)
+      P_test <- apply(Y_test, 2, function(bb) {nnls::nnls(A = G_train, b = bb)$x}) # get P_test using NNLS since it and P_train share the same Theta and s
+      cv_error <- cv_error + norm(Y_test - G_train %*% P_test, type = 'F')^2
     }
-    tune_grid$cv_error[i] = cv_error/n_fold # assign the averaged CV error
+    tune_grid$cv_error[i] <- cv_error/(n_fold * nrow(Y) * ncol(Y)) # assign the averaged CV error
   }
   message('Finished cross validation...')
   ## return the best parameter
-  best_param_id = which(tune_grid$cv_error == min(tune_grid$cv_error))
-  alpha1_best = tune_grid$alpha1[best_param_id]
-  alpha2_best = tune_grid$alpha2[best_param_id]
-  beta_best = tune_grid$beta[best_param_id]
+  best_param_id <- which(tune_grid$cv_error == min(tune_grid$cv_error))
+  alpha1_best <- tune_grid$alpha1[best_param_id]
+  alpha2_best <- tune_grid$alpha2[best_param_id]
+  beta_best <- tune_grid$beta[best_param_id]
   if (verbose) message(paste('The best tuning parameters are alpha1 = ', alpha1_best,
                              ', alpha2 = ', alpha2_best,
                              ', beta = ', beta_best,
                              '; they can be extracted from the returned list object.'))
   return(list(alpha1 = alpha1_best,
               alpha2 = alpha2_best,
-              beta = beta_best))
+              beta = beta_best,
+              error = min(tune_grid$cv_error)))
 }

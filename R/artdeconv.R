@@ -15,7 +15,7 @@
 #' @param parallel a logical value indicating whether or not to run [artdeconv()] in parallel; default is `TRUE` 
 #' @param ... other parameters that can be passed to the function (see [artdeconv_single_solve()])
 #' 
-#' @seealso [artdeconv_single_solve()]
+#' @seealso [artdeconv_single_solve]
 #' 
 #' @return A list with following items
 #' * Y_hat: the estimated Y from the product of estimated factors
@@ -37,10 +37,7 @@ artdeconv <- function(Y, Theta_0, m0, k0, meds, ranges, alpha1, alpha2, beta, n_
     ## run all restarts in parallel
     rl = foreach::foreach(i = seq_len(n_start)) %dopar% {
       initials = get_initials(Y, Theta_0, meds, m, n, k, m0, k0)
-      Theta_it = initials$Theta
-      s_it = initials$s
-      P_it = initials$P
-      mu_res = artdeconv_single_solve(Y, Theta_0, Theta_it, s_it, P_it, m, n, k, m0, k0, meds, ranges, alpha1, alpha2, beta, ...)
+      mu_res = artdeconv_single_solve(Y, Theta_0, initials$Theta, initials$s, initials$P, m, n, k, m0, k0, meds, ranges, alpha1, alpha2, beta, ...)
       mu_res
     }
   } else {
@@ -50,18 +47,54 @@ artdeconv <- function(Y, Theta_0, m0, k0, meds, ranges, alpha1, alpha2, beta, n_
     ## start the iterates
     for (i in seq_len(n_start)) {
       initials = get_initials(Y, Theta_0, meds, m, n, k, m0, k0)
-      Theta_it = initials$Theta
-      s_it = initials$s
-      P_it = initials$P
-      rl[[i]] = artdeconv_single_solve(Y, Theta_0, Theta_it, s_it, P_it, m, n, k, m0, k0, meds, ranges, alpha1, alpha2, beta, ...)
+      rl[[i]] = artdeconv_single_solve(Y, Theta_0, initials$Theta, initials$s, initials$P, m, n, k, m0, k0, meds, ranges, alpha1, alpha2, beta, ...)
     }
   }
-  
   ## get the residuals of Y of each iteration
   itr_res = sapply(rl, function(x) norm(Y - x$Y_hat, type = 'F'))
   
   ## find the best iteration by argmin(Yr[i])
   best_ind = which(itr_res == min(itr_res))
   best_itr = rl[[best_ind[1]]]
+  return(best_itr)
+}
+
+#' The Bare Bone ARTDeConv Function For Cross-validations
+#'
+#' @seealso [artdeconv_single_solve_for_cv]
+#'
+#' @importFrom foreach foreach
+#' @importFrom foreach %dopar% 
+
+artdeconv_for_cv <- function(Y, Theta_0, m0, k0, meds, ranges, alpha1, alpha2, beta, n_start = 10, parallel = TRUE, ...) {
+  ## parameters
+  m <- nrow(Y)
+  n <- ncol(Y)
+  k <- ncol(Theta_0)
+  
+  ## the parallel version 
+  if (parallel) {
+    ## run all restarts in parallel
+    rl <- foreach::foreach(i = seq_len(n_start)) %dopar% {
+      initials <- get_initials(Y, Theta_0, meds, m, n, k, m0, k0)
+      mu_res <- artdeconv_single_solve_for_cv(Y, Theta_0, initials$Theta, initials$s, initials$P, m, n, k, m0, k0, meds, ranges, alpha1, alpha2, beta, ...)
+      mu_res
+    }
+  } else {
+    ## a list to save all results
+    rl <- vector('list', n_start)
+    
+    ## start the iterates
+    for (i in seq_len(n_start)) {
+      initials <- get_initials(Y, Theta_0, meds, m, n, k, m0, k0)
+      rl[[i]] <- artdeconv_single_solve_for_cv(Y, Theta_0, initials$Theta, initials$s, initials$P, m, n, k, m0, k0, meds, ranges, alpha1, alpha2, beta, ...)
+    }
+  }
+  ## get the residuals of Y of each iteration
+  itr_res <- sapply(rl, function(x) norm(Y - x$Y_hat, type = 'F'))
+  
+  ## find the best iteration by argmin(Yr[i])
+  best_ind <- which(itr_res == min(itr_res))
+  best_itr <- rl[[best_ind[1]]]
   return(best_itr)
 }
