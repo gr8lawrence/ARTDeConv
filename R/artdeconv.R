@@ -2,31 +2,32 @@
 #' 
 #' TODO: write a complete description of the package
 #' 
-#' @param Y the bulk matrix
-#' @param Theta_0 \eqn{m_0 \times K_0} reference matrix for the fixed part of the signature matrix
-#' @param m0 the number of signature genes for well characterized cell types in a tissue
-#' @param k0 the number of well characterized cell types in a tissue
-#' @param meds a vector of length \eqn{K} of pre-specified medians of cell proportions 
-#' @param ranges a vector of length \eqn{K} of pre-specified ranges of cell-type proportions (1/`ranges` is used as weights for regularization parameters)
-#' @param alpha1 the tuning parameter for regularizing the known part of Theta
-#' @param alpha2 the tuning parameter for regularizing the unknown part of Theta
-#' @param beta the tuning parameter for regularizing P
-#' @param n_start an integer indicating the number of restarts of the algorithm; default value is 10
-#' @param parallel a logical value indicating whether or not to run [artdeconv()] in parallel; default is `TRUE` 
-#' @param ... other parameters that can be passed to the function (see [artdeconv_single_solve()])
+#' @param Y the bulk matrix.
+#' @param Theta_0 \eqn{m_0 \times K_0} reference matrix for the fixed part of the signature matrix.
+#' @param m0 the number of signature genes for well characterized cell types in a tissue.
+#' @param k0 the number of well characterized cell types in a tissue.
+#' @param meds a vector of length \eqn{K} of pre-specified medians of cell proportions.
+#' @param ranges a vector of length \eqn{K} of pre-specified ranges of cell-type proportions (1/`ranges` is used as weights for regularization parameters).
+#' @param alpha1 the tuning parameter for regularizing the known part of Theta.
+#' @param alpha2 the tuning parameter for regularizing the unknown part of Theta.
+#' @param beta the tuning parameter for regularizing P.
+#' @param n_start an integer indicating the number of restarts of the algorithm; default value is 10.
+#' @param parallel a logical value indicating whether or not to run [artdeconv] in parallel; default is `TRUE`. 
+#' @param s_fixed a logical value indicating whether the cell size matrix \eqn{S} is coerced to be the identity matrix; default is `FALSE`.
+#' @param ... other parameters that can be passed to the function (see [artdeconv_single_solve]).
 #' 
 #' @seealso [artdeconv_single_solve]
 #' 
-#' @return A list with following items
-#' * Y_hat: the estimated Y from the product of estimated factors
-#' * Theta_hat: the estimated signature matrix from deconvolution
-#' * s_hat: the estimated "cell size" vector from deconvolution
-#' * P_hat the estimated Theta from deconvolution
+#' @return A list with following items:
+#' * Y_hat: the estimated Y from the product of estimated factors;
+#' * Theta_hat: the estimated signature matrix from deconvolution;
+#' * s_hat: the estimated "cell size" vector from deconvolution;
+#' * P_hat the estimated Theta from deconvolution.
 #' 
 #' @importFrom foreach foreach
 #' @importFrom foreach %dopar% 
 #' @export
-artdeconv <- function(Y, Theta_0, m0, k0, meds, ranges, alpha1, alpha2, beta, n_start = 10, parallel = TRUE, ...) {
+artdeconv <- function(Y, Theta_0, m0, k0, meds, ranges, alpha1, alpha2, beta, n_start = 10, parallel = TRUE, s_fixed = FALSE, ...) {
   ## parameters
   m <- nrow(Y)
   n <- ncol(Y)
@@ -37,7 +38,11 @@ artdeconv <- function(Y, Theta_0, m0, k0, meds, ranges, alpha1, alpha2, beta, n_
     ## run all restarts in parallel
     rl <- foreach::foreach(i = seq_len(n_start)) %dopar% {
       initials <- get_initials(Y, Theta_0, meds, m, n, k, m0, k0)
-      mu_res <- artdeconv_single_solve(Y, Theta_0, initials$Theta, initials$s, initials$P, m, n, k, m0, k0, meds, ranges, alpha1, alpha2, beta, ...)
+      if (s_fixed) {
+        mu_res <- artdeconv_single_solve_s_fixed(Y, Theta_0, initials$Theta, initials$P, m, n, k, m0, k0, meds, ranges, alpha1, alpha2, beta, ...)
+      } else {
+        mu_res <- artdeconv_single_solve(Y, Theta_0, initials$Theta, initials$s, initials$P, m, n, k, m0, k0, meds, ranges, alpha1, alpha2, beta, ...)
+      }
       mu_res
     }
   } else {
@@ -47,7 +52,11 @@ artdeconv <- function(Y, Theta_0, m0, k0, meds, ranges, alpha1, alpha2, beta, n_
     ## start the iterates
     for (i in seq_len(n_start)) {
       initials <- get_initials(Y, Theta_0, meds, m, n, k, m0, k0)
-      rl[[i]] <- artdeconv_single_solve(Y, Theta_0, initials$Theta, initials$s, initials$P, m, n, k, m0, k0, meds, ranges, alpha1, alpha2, beta, ...)
+      if (s_fixed) {
+        rl[[i]] <- artdeconv_single_solve(Y, Theta_0, initials$Theta, initials$P, m, n, k, m0, k0, meds, ranges, alpha1, alpha2, beta, ...)
+      } else {
+        rl[[i]] <- artdeconv_single_solve(Y, Theta_0, initials$Theta, initials$s, initials$P, m, n, k, m0, k0, meds, ranges, alpha1, alpha2, beta, ...)
+      }
     }
   }
   ## get the residuals of Y of each iteration
@@ -66,7 +75,7 @@ artdeconv <- function(Y, Theta_0, m0, k0, meds, ranges, alpha1, alpha2, beta, n_
 #' @importFrom foreach foreach
 #' @importFrom foreach %dopar% 
 
-artdeconv_for_cv <- function(Y, Theta_0, m0, k0, meds, ranges, alpha1, alpha2, beta, n_start = 10, parallel = TRUE, ...) {
+artdeconv_for_cv <- function(Y, Theta_0, m0, k0, meds, ranges, alpha1, alpha2, beta, n_start = 10, parallel = TRUE, s_fixed = FALSE, ...) {
   ## parameters
   m <- nrow(Y)
   n <- ncol(Y)
@@ -77,7 +86,11 @@ artdeconv_for_cv <- function(Y, Theta_0, m0, k0, meds, ranges, alpha1, alpha2, b
     ## run all restarts in parallel
     rl <- foreach::foreach(i = seq_len(n_start)) %dopar% {
       initials <- get_initials(Y, Theta_0, meds, m, n, k, m0, k0)
-      mu_res <- artdeconv_single_solve_for_cv(Y, Theta_0, initials$Theta, initials$s, initials$P, m, n, k, m0, k0, meds, ranges, alpha1, alpha2, beta, ...)
+      if (s_fixed) {
+        mu_res <- artdeconv_single_solve_s_fixed_for_cv(Y, Theta_0, initials$Theta, initials$P, m, n, k, m0, k0, meds, ranges, alpha1, alpha2, beta, ...)
+      } else {
+        mu_res <- artdeconv_single_solve_for_cv(Y, Theta_0, initials$Theta, initials$s, initials$P, m, n, k, m0, k0, meds, ranges, alpha1, alpha2, beta, ...)
+      }
       mu_res
     }
   } else {
@@ -87,7 +100,11 @@ artdeconv_for_cv <- function(Y, Theta_0, m0, k0, meds, ranges, alpha1, alpha2, b
     ## start the iterates
     for (i in seq_len(n_start)) {
       initials <- get_initials(Y, Theta_0, meds, m, n, k, m0, k0)
-      rl[[i]] <- artdeconv_single_solve_for_cv(Y, Theta_0, initials$Theta, initials$s, initials$P, m, n, k, m0, k0, meds, ranges, alpha1, alpha2, beta, ...)
+      if (s_fixed) {
+        rl[[i]] <- artdeconv_single_solve_s_fixed_for_cv(Y, Theta_0, initials$Theta, initials$s, initials$P, m, n, k, m0, k0, meds, ranges, alpha1, alpha2, beta, ...)
+      } else {
+        rl[[i]] <- artdeconv_single_solve_for_cv(Y, Theta_0, initials$Theta, initials$s, initials$P, m, n, k, m0, k0, meds, ranges, alpha1, alpha2, beta, ...)
+      }
     }
   }
   ## get the residuals of Y of each iteration

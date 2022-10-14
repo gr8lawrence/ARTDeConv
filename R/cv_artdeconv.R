@@ -1,19 +1,19 @@
 #' Cross Validation Function For Finding Optimal Tuning Parameters For ARTdeConv
 #' 
-#' @param Y the bulk matrix
-#' @param Theta_0 \eqn{m_0 \times K_0} reference matrix for the fixed part of the signature matrix
-#' @param m0 the number of signature genes for well characterized cell types in a tissue
-#' @param k0 the number of well characterized cell types in a tissue
-#' @param meds a vector of length \eqn{K} of pre-specified medians of cell proportions 
-#' @param ranges a vector of length \eqn{K} of pre-specified ranges of cell-type proportions (1/ranges as weights for regularization parameters)
-#' @param alpha1_range a vector of tuning parameters for \eqn{\alpha_1} 
-#' @param alpha2_range a vector of tuning parameters for \eqn{\alpha_2} 
-#' @param beta_range a vector of tuning parameters for \eqn{\beta}
-#' @param n_fold the number of folds of the cross validation; default is 5
-#' @param n_start the number of restart for ARTdeConv in each cross validation fold; default is 10
-#' @param parallel a logical value of whether to run ARTdeConv in parallel; default is `TRUE`
-#' @param verbose a logical value: if `TRUE`, will print a message of all optimal tuning parameters after the cross validaiton is done; default is `TRUE`
-#' @param ... other parameters for the [artdeconv] function
+#' @param Y the bulk matrix.
+#' @param Theta_0 \eqn{m_0 \times K_0} reference matrix for the fixed part of the signature matrix.
+#' @param m0 the number of signature genes for well characterized cell types in a tissue.
+#' @param k0 the number of well characterized cell types in a tissue.
+#' @param meds a vector of length \eqn{K} of pre-specified medians of cell proportions.
+#' @param ranges a vector of length \eqn{K} of pre-specified ranges of cell-type proportions (1/ranges as weights for regularization parameters).
+#' @param alpha1_range a vector of tuning parameters for \eqn{\alpha_1}.
+#' @param alpha2_range a vector of tuning parameters for \eqn{\alpha_2}.
+#' @param beta_range a vector of tuning parameters for \eqn{\beta}.
+#' @param n_fold the number of folds of the cross validation; default is 5.
+#' @param n_start the number of restart for ARTdeConv in each cross validation fold; default is 10.
+#' @param parallel a logical value of whether to run ARTdeConv in parallel; default is `TRUE`.
+#' @param verbose a logical value: if `TRUE`, will print a message of all optimal tuning parameters after the cross validaiton is done; default is `TRUE`.
+#' @param ... other parameters for the [artdeconv] function.
 #' 
 #' @importFrom nnls nnls
 #' 

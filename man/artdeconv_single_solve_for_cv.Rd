@@ -21,8 +21,7 @@ artdeconv_single_solve_for_cv(
   alpha2,
   beta,
   max_iter = 1e+05,
-  tol = 1e-05,
-  fixed_s = FALSE
+  tol = 1e-05
 )
 }
 \description{

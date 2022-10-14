@@ -16,41 +16,44 @@ artdeconv(
   beta,
   n_start = 10,
   parallel = TRUE,
+  s_fixed = FALSE,
   ...
 )
 }
 \arguments{
-\item{Y}{the bulk matrix}
+\item{Y}{the bulk matrix.}
 
-\item{Theta_0}{\eqn{m_0 \times K_0} reference matrix for the fixed part of the signature matrix}
+\item{Theta_0}{\eqn{m_0 \times K_0} reference matrix for the fixed part of the signature matrix.}
 
-\item{m0}{the number of signature genes for well characterized cell types in a tissue}
+\item{m0}{the number of signature genes for well characterized cell types in a tissue.}
 
-\item{k0}{the number of well characterized cell types in a tissue}
+\item{k0}{the number of well characterized cell types in a tissue.}
 
-\item{meds}{a vector of length \eqn{K} of pre-specified medians of cell proportions}
+\item{meds}{a vector of length \eqn{K} of pre-specified medians of cell proportions.}
 
-\item{ranges}{a vector of length \eqn{K} of pre-specified ranges of cell-type proportions (1/\code{ranges} is used as weights for regularization parameters)}
+\item{ranges}{a vector of length \eqn{K} of pre-specified ranges of cell-type proportions (1/\code{ranges} is used as weights for regularization parameters).}
 
-\item{alpha1}{the tuning parameter for regularizing the known part of Theta}
+\item{alpha1}{the tuning parameter for regularizing the known part of Theta.}
 
-\item{alpha2}{the tuning parameter for regularizing the unknown part of Theta}
+\item{alpha2}{the tuning parameter for regularizing the unknown part of Theta.}
 
-\item{beta}{the tuning parameter for regularizing P}
+\item{beta}{the tuning parameter for regularizing P.}
 
-\item{n_start}{an integer indicating the number of restarts of the algorithm; default value is 10}
+\item{n_start}{an integer indicating the number of restarts of the algorithm; default value is 10.}
 
-\item{parallel}{a logical value indicating whether or not to run \code{\link[=artdeconv]{artdeconv()}} in parallel; default is \code{TRUE}}
+\item{parallel}{a logical value indicating whether or not to run \link{artdeconv} in parallel; default is \code{TRUE}.}
 
-\item{...}{other parameters that can be passed to the function (see \code{\link[=artdeconv_single_solve]{artdeconv_single_solve()}})}
+\item{s_fixed}{a logical value indicating whether the cell size matrix \eqn{S} is coerced to be the identity matrix; default is \code{FALSE}.}
+
+\item{...}{other parameters that can be passed to the function (see \link{artdeconv_single_solve}).}
 }
 \value{
-A list with following items
+A list with following items:
 \itemize{
-\item Y_hat: the estimated Y from the product of estimated factors
-\item Theta_hat: the estimated signature matrix from deconvolution
-\item s_hat: the estimated "cell size" vector from deconvolution
-\item P_hat the estimated Theta from deconvolution
+\item Y_hat: the estimated Y from the product of estimated factors;
+\item Theta_hat: the estimated signature matrix from deconvolution;
+\item s_hat: the estimated "cell size" vector from deconvolution;
+\item P_hat the estimated Theta from deconvolution.
 }
 }
 \description{

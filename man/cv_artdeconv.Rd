@@ -23,33 +23,33 @@ cv_artdeconv(
 )
 }
 \arguments{
-\item{Y}{the bulk matrix}
+\item{Y}{the bulk matrix.}
 
-\item{Theta_0}{\eqn{m_0 \times K_0} reference matrix for the fixed part of the signature matrix}
+\item{Theta_0}{\eqn{m_0 \times K_0} reference matrix for the fixed part of the signature matrix.}
 
-\item{m0}{the number of signature genes for well characterized cell types in a tissue}
+\item{m0}{the number of signature genes for well characterized cell types in a tissue.}
 
-\item{k0}{the number of well characterized cell types in a tissue}
+\item{k0}{the number of well characterized cell types in a tissue.}
 
-\item{meds}{a vector of length \eqn{K} of pre-specified medians of cell proportions}
+\item{meds}{a vector of length \eqn{K} of pre-specified medians of cell proportions.}
 
-\item{ranges}{a vector of length \eqn{K} of pre-specified ranges of cell-type proportions (1/ranges as weights for regularization parameters)}
+\item{ranges}{a vector of length \eqn{K} of pre-specified ranges of cell-type proportions (1/ranges as weights for regularization parameters).}
 
-\item{alpha1_range}{a vector of tuning parameters for \eqn{\alpha_1}}
+\item{alpha1_range}{a vector of tuning parameters for \eqn{\alpha_1}.}
 
-\item{alpha2_range}{a vector of tuning parameters for \eqn{\alpha_2}}
+\item{alpha2_range}{a vector of tuning parameters for \eqn{\alpha_2}.}
 
-\item{beta_range}{a vector of tuning parameters for \eqn{\beta}}
+\item{beta_range}{a vector of tuning parameters for \eqn{\beta}.}
 
-\item{n_fold}{the number of folds of the cross validation; default is 5}
+\item{n_fold}{the number of folds of the cross validation; default is 5.}
 
-\item{n_start}{the number of restart for ARTdeConv in each cross validation fold; default is 10}
+\item{n_start}{the number of restart for ARTdeConv in each cross validation fold; default is 10.}
 
-\item{parallel}{a logical value of whether to run ARTdeConv in parallel; default is \code{TRUE}}
+\item{parallel}{a logical value of whether to run ARTdeConv in parallel; default is \code{TRUE}.}
 
-\item{verbose}{a logical value: if \code{TRUE}, will print a message of all optimal tuning parameters after the cross validaiton is done; default is \code{TRUE}}
+\item{verbose}{a logical value: if \code{TRUE}, will print a message of all optimal tuning parameters after the cross validaiton is done; default is \code{TRUE}.}
 
-\item{...}{other parameters for the \link{artdeconv} function}
+\item{...}{other parameters for the \link{artdeconv} function.}
 }
 \description{
 Cross Validation Function For Finding Optimal Tuning Parameters For ARTdeConv

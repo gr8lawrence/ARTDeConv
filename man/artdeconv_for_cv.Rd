@@ -16,6 +16,7 @@ artdeconv_for_cv(
   beta,
   n_start = 10,
   parallel = TRUE,
+  s_fixed = FALSE,
   ...
 )
 }
