@@ -11,7 +11,7 @@
 #' 
 #' @return a \eqn{M \times K} binary matrix
 get_Delta <- function(k, k0, m, m0) {
-  Delta = rbind(
+  Delta <- rbind(
     matrix(rep(c(rep(1, k0), rep(0, k - k0)), m0), m0, k, byrow=TRUE),
     matrix(0, m - m0, k)
   )
@@ -30,6 +30,6 @@ get_Delta <- function(k, k0, m, m0) {
 #' @return the Frobenius inner products of `A` and `B`
 inner_product_TL <- function(A, B) {
   if (prod(dim(A) == dim(B)) == 0) stop("Dimensions of two matrices must be the same")
-  inner = sum(A * B)
+  inner <- sum(A * B)
   return(inner)
 }
