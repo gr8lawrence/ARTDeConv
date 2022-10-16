@@ -60,7 +60,7 @@ artdeconv_single_solve <- function(Y, Theta_0, Theta_it, s_it, P_it, m, n, k, m0
     ## calculate the updated objective funtion and its change
     obj_v[t] <- obj_new <- artdeconv_obj_fun(Y, Y_new, Theta_new, P_new, m, n, k, m0, k0, Theta_0, meds, ranges, alpha1, alpha2, beta)
     res_v[t] <- norm(Y_new - Y, type = "F")/sqrt(m * n) ## storing all residuals of Y
-    delt_obj <- abs(obj_new - obj_old) # calculate the change in objective function values
+    delt_obj <- abs(obj_new - obj_old)/obj_old # calculate the change in objective function values
     
     ## passing the updates to the next round
     Y_old <- Y_new
@@ -112,7 +112,7 @@ artdeconv_single_solve_s_fixed <- function(Y, Theta_0, Theta_it, P_it, m, n, k, 
     ## calculate the updated objective funtion and its change
     obj_v[t] <- obj_new <- artdeconv_obj_fun(Y, Y_new, Theta_new, P_new, m, n, k, m0, k0, Theta_0, meds, ranges, alpha1, alpha2, beta)
     res_v[t] <- norm(Y_new - Y, type = "F")/sqrt(m * n) ## storing all residuals of Y
-    delt_obj <- abs(obj_new - obj_old) # calculate the change in objective function values
+    delt_obj <- abs(obj_new - obj_old)/obj_old # calculate the change in objective function values
     
     ## passing the updates to the next round
     Y_old <- Y_new
@@ -158,7 +158,7 @@ artdeconv_single_solve_for_cv <- function(Y, Theta_0, Theta_it, s_it, P_it, m, n
     s_new <- mu_s(Y, Theta_new, s_old, P_new)
     Y_new <- Theta_new %*% diag(s_new) %*% P_new
     obj_new <- artdeconv_obj_fun(Y, Y_new, Theta_new, P_new, m, n, k, m0, k0, Theta_0, meds, ranges, alpha1, alpha2, beta)
-    delt_obj <- abs(obj_new - obj_old)
+    delt_obj <- abs(obj_new - obj_old)/obj_old
     
     ## passing the updates to the next round
     Theta_old <- Theta_new
@@ -197,7 +197,7 @@ artdeconv_single_solve_s_fixed_for_cv <- function(Y, Theta_0, Theta_it, P_it, m,
     P_new <- mu_P(Y, Theta_new, s_old, meds, P_old, m, n, beta, ranges)
     Y_new <- Theta_new %*% P_new
     obj_new <- artdeconv_obj_fun(Y, Y_new, Theta_new, P_new, m, n, k, m0, k0, Theta_0, meds, ranges, alpha1, alpha2, beta)
-    delt_obj <- abs(obj_new - obj_old)
+    delt_obj <- abs(obj_new - obj_old)/obj_old
     
     ## passing the updates to the next round
     Theta_old <- Theta_new
