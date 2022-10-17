@@ -14,6 +14,7 @@
 #' @return A list of the initial values for \eqn{(\mathbf{\Theta}, \mathbf{s}, \mathbf{P})}.
 
 get_initials <- function(Y_star, Theta_0, meds, m, n, k, m0, k0) {
+  
   ## get Theta
   Theta_it <- matrix(0, m, k)
   for (ii in seq(m)) Theta_it[ii, ] <- abs(rnorm(k, mean(Y_star[ii, ]), sd(Y_star[ii, ])))
@@ -29,7 +30,6 @@ get_initials <- function(Y_star, Theta_0, meds, m, n, k, m0, k0) {
   V <- t(Theta_it) %*% Theta_it * P_it %*% t(P_it)
   s_it <- as.vector(solve(V + diag(1e-16, ncol(V))) %*% u) # make sure V is positive definite
   s_it[s_it < 0] <- mean(s_it[s_it > 0])
-  
   return(list(Theta = Theta_it, 
               s = s_it, 
               P = P_it))

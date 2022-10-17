@@ -83,7 +83,7 @@ artdeconv_single_solve <- function(Y, Theta_0, Theta_it, s_it, P_it, m, n, k, m0
               n_iter = t - 1))
 }
 
-## #' ARTdeConv function for a bi-factor model with fixed S 
+#' ARTdeConv function for a bi-factor model with fixed S 
 
 artdeconv_single_solve_s_fixed <- function(Y, Theta_0, Theta_it, P_it, m, n, k, m0, k0, meds, ranges, alpha1, alpha2, beta, max_iter = 1e5, tol = 1e-5) {
   
