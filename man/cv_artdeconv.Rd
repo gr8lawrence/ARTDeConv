@@ -49,6 +49,8 @@ cv_artdeconv(
 
 \item{verbose}{a logical value: if \code{TRUE}, will print a message of all optimal tuning parameters after the cross validaiton is done; default is \code{TRUE}.}
 
+\item{seed}{a numerical seed to ensure the reproducibility of results; default is 100.}
+
 \item{...}{other parameters for the \link{artdeconv} function.}
 }
 \description{

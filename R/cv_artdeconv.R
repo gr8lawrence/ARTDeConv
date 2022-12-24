@@ -13,6 +13,7 @@
 #' @param n_start the number of restart for ARTdeConv in each cross validation fold; default is 10.
 #' @param parallel a logical value of whether to run ARTdeConv in parallel; default is `TRUE`.
 #' @param verbose a logical value: if `TRUE`, will print a message of all optimal tuning parameters after the cross validaiton is done; default is `TRUE`.
+#' @param seed a numerical seed to ensure the reproducibility of results; default is 100.
 #' @param ... other parameters for the [artdeconv] function.
 #' 
 #' @importFrom nnls nnls
@@ -27,42 +28,28 @@ cv_artdeconv <- function(Y, Theta_0, m0, k0, meds, ranges, alpha1_range, alpha2_
   
   ## get all parameter combinations
   tune_grid <- expand.grid(alpha1 = alpha1_range, alpha2 = alpha2_range, beta = beta_range)
-  tune_grid$cv_error <- NaN
   
   ## determine the fold ids
   fold_id <- sample(x = rep(seq(n_fold), ceiling(ncol(Y)/n_fold)), size = ncol(Y)) # assign fold id
   
-  ## set up the progress bar
-  pb <- progress::progress_bar$new(format = "(:spin) [:bar] :percent [Elapsed time: :elapsedfull || Estimated time remaining: :eta]",
-                                   total = nrow(tune_grid) * n_fold,
-                                   complete = "=",   # Completion bar character
-                                   incomplete = "-", # Incomplete bar character
-                                   current = ">",    # Current bar character
-                                   clear = FALSE,    # If TRUE, clears the bar when finish
-                                   width = 100)      # Width of the progress bar)
-  
   ## the outer loop for each combination of tuning param
   message('Begin cross validation...')
-  for (i in seq(nrow(tune_grid))) {
-    cv_error <- 0 # initiate the total CV error
-    
-    ## the inner loop to calculate total CV error for this param combination
-    for (j in seq(n_fold)) {
-      pb$tick() # upgrade the progress bar
+  cv_errors_matrix <- foreach::foreach(i = 1:nrow(tune_grid), .combine = 'cbind') %:%  
+    foreach::foreach(j = 1:n_fold, .combine = 'c') %dopar% {
+      
+      ## the inner loop to calculate total CV error for this param combination
       holdout_id <- (fold_id == j) # locate the ids for the test set
-      Y_test <- Y[, holdout_id] # the test set
-      Y_train <- Y[, !holdout_id] # the training set
-      train_res <- artdeconv_for_cv(Y = Y_train, Theta_0 = Theta_0, m0 = m0, k0 = k0, meds = meds, ranges = ranges, alpha1 = tune_grid$alpha1[i], alpha2 = tune_grid$alpha2[i], beta = tune_grid$beta[i], n_start = n_start, parallel = parallel, ...)
-      G_train <- train_res$Theta_hat %*% diag(train_res$s_hat)
-      P_test <- apply(Y_test, 2, function(bb) {nnls::nnls(A = G_train, b = bb)$x}) # get P_test using NNLS since it and P_train share the same Theta and s
-      cv_error <- cv_error + norm(Y_test - G_train %*% P_test, type = 'F')^2
-    }
-    tune_grid$cv_error[i] <- cv_error/(n_fold * nrow(Y) * ncol(Y)) # assign the averaged CV error
-  }
+      train_res <- artdeconv(Y = Y[, !holdout_id], Theta_0 = Theta_0, m0 = m0, k0 = k0, meds = meds, ranges = ranges, alpha1 = tune_grid$alpha1[i], alpha2 = tune_grid$alpha2[i], beta = tune_grid$beta[i], n_start = n_start, parallel = FALSE, ...)
+      G_train <- train_res$Theta_hat %*% diag(c(train_res$s_hat))
+      P_test <- apply(Y[, holdout_id], 2, function(bb) {nnls::nnls(A = G_train, b = bb)$x}) # get P_test using NNLS since it and P_train share the same Theta and s
+      cv_error <- norm(Y[, holdout_id] - G_train %*% P_test, type = 'F')^2/(n_fold * nrow(Y) * ncol(Y))
+      cv_error
+    } 
   message('Finished cross validation...')
   
   ## return the best parameter
-  best_param_id <- which(tune_grid$cv_error == min(tune_grid$cv_error))
+  cv_errors <- colSums(cv_errors_matrix) # the sum of each column corresponds to the total CV error for a combination of pars
+  best_param_id <- which(cv_errors == min(cv_errors))
   alpha1_best <- tune_grid$alpha1[best_param_id]
   alpha2_best <- tune_grid$alpha2[best_param_id]
   beta_best <- tune_grid$beta[best_param_id]
@@ -73,5 +60,5 @@ cv_artdeconv <- function(Y, Theta_0, m0, k0, meds, ranges, alpha1_range, alpha2_
   return(list(alpha1 = alpha1_best,
               alpha2 = alpha2_best,
               beta = beta_best,
-              error = min(tune_grid$cv_error)))
+              error = min(cv_errors)))
 }

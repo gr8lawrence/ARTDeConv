@@ -1,9 +1,10 @@
-#' Adaptive regularized tri-factor NMF deconvolution
+#' Adaptive Regularized Tri-factor NMF Deconvolution
 #' 
-#' TODO: write a complete description of the package
+#' This function performs deconvolution of the bulk expression data using the ARTdeConv algorithm. 
+#' The user should input 
 #' 
 #' @param Y the bulk matrix.
-#' @param Theta_0 \eqn{m_0 \times K_0} reference matrix for the fixed part of the signature matrix.
+#' @param Theta_0 \eqn{m_0 \times K_0} partial reference matrix that we have prior knowledge about.
 #' @param m0 the number of signature genes for well characterized cell types in a tissue.
 #' @param k0 the number of well characterized cell types in a tissue.
 #' @param meds a vector of length \eqn{K} of pre-specified medians of cell proportions.
@@ -27,6 +28,7 @@
 #' @importFrom foreach foreach
 #' @importFrom foreach %dopar% 
 #' @export
+
 artdeconv <- function(Y, Theta_0, m0, k0, meds, ranges, alpha1, alpha2, beta, n_start = 10, parallel = TRUE, s_fixed = FALSE, ...) {
   ## parameters
   m <- nrow(Y)
@@ -39,9 +41,9 @@ artdeconv <- function(Y, Theta_0, m0, k0, meds, ranges, alpha1, alpha2, beta, n_
     rl <- foreach::foreach(i = seq_len(n_start)) %dopar% {
       initials <- get_initials(Y, Theta_0, meds, m, n, k, m0, k0)
       if (s_fixed) {
-        mu_res <- artdeconv_single_solve_s_fixed(Y, Theta_0, initials$Theta, initials$P, m, n, k, m0, k0, meds, ranges, alpha1, alpha2, beta, ...)
+        mu_res <- artdeconv_single_solve_s_fixed_cpp(Y, Theta_0, initials$Theta, initials$P, m0, k0, meds, ranges, alpha1, alpha2, beta, ...)
       } else {
-        mu_res <- artdeconv_single_solve(Y, Theta_0, initials$Theta, initials$s, initials$P, m, n, k, m0, k0, meds, ranges, alpha1, alpha2, beta, ...)
+        mu_res <- artdeconv_single_solve_cpp(Y, Theta_0, initials$Theta, initials$s, initials$P, m0, k0, meds, ranges, alpha1, alpha2, beta, ...)
       }
       mu_res
     }
@@ -53,57 +55,9 @@ artdeconv <- function(Y, Theta_0, m0, k0, meds, ranges, alpha1, alpha2, beta, n_
     for (i in seq_len(n_start)) {
       initials <- get_initials(Y, Theta_0, meds, m, n, k, m0, k0)
       if (s_fixed) {
-        rl[[i]] <- artdeconv_single_solve(Y, Theta_0, initials$Theta, initials$P, m, n, k, m0, k0, meds, ranges, alpha1, alpha2, beta, ...)
+        rl[[i]] <- artdeconv_single_solve_s_fixed_cpp(Y, Theta_0, initials$Theta, initials$P, m0, k0, meds, ranges, alpha1, alpha2, beta, ...)
       } else {
-        rl[[i]] <- artdeconv_single_solve(Y, Theta_0, initials$Theta, initials$s, initials$P, m, n, k, m0, k0, meds, ranges, alpha1, alpha2, beta, ...)
-      }
-    }
-  }
-  ## get the residuals of Y of each iteration
-  itr_res <-sapply(rl, function(x) norm(Y - x$Y_hat, type = 'F'))
-  
-  ## find the best iteration by argmin(Yr[i])
-  best_ind <- which(itr_res == min(itr_res))
-  best_itr <- rl[[best_ind[1]]]
-  return(best_itr)
-}
-
-#' The Bare Bone ARTDeConv Function For Cross-validations
-#'
-#' @seealso [artdeconv_single_solve_for_cv]
-#'
-#' @importFrom foreach foreach
-#' @importFrom foreach %dopar% 
-
-artdeconv_for_cv <- function(Y, Theta_0, m0, k0, meds, ranges, alpha1, alpha2, beta, n_start = 10, parallel = TRUE, s_fixed = FALSE, ...) {
-  ## parameters
-  m <- nrow(Y)
-  n <- ncol(Y)
-  k <- ncol(Theta_0)
-  
-  ## the parallel version 
-  if (parallel) {
-    ## run all restarts in parallel
-    rl <- foreach::foreach(i = seq_len(n_start)) %dopar% {
-      initials <- get_initials(Y, Theta_0, meds, m, n, k, m0, k0)
-      if (s_fixed) {
-        mu_res <- artdeconv_single_solve_s_fixed_for_cv(Y, Theta_0, initials$Theta, initials$P, m, n, k, m0, k0, meds, ranges, alpha1, alpha2, beta, ...)
-      } else {
-        mu_res <- artdeconv_single_solve_for_cv(Y, Theta_0, initials$Theta, initials$s, initials$P, m, n, k, m0, k0, meds, ranges, alpha1, alpha2, beta, ...)
-      }
-      mu_res
-    }
-  } else {
-    ## a list to save all results
-    rl <- vector('list', n_start)
-    
-    ## start the iterates
-    for (i in seq_len(n_start)) {
-      initials <- get_initials(Y, Theta_0, meds, m, n, k, m0, k0)
-      if (s_fixed) {
-        rl[[i]] <- artdeconv_single_solve_s_fixed_for_cv(Y, Theta_0, initials$Theta, initials$s, initials$P, m, n, k, m0, k0, meds, ranges, alpha1, alpha2, beta, ...)
-      } else {
-        rl[[i]] <- artdeconv_single_solve_for_cv(Y, Theta_0, initials$Theta, initials$s, initials$P, m, n, k, m0, k0, meds, ranges, alpha1, alpha2, beta, ...)
+        rl[[i]] <- artdeconv_single_solve_cpp(Y, Theta_0, initials$Theta, initials$s, initials$P, m0, k0, meds, ranges, alpha1, alpha2, beta, ...)
       }
     }
   }

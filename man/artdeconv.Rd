@@ -2,7 +2,7 @@
 % Please edit documentation in R/artdeconv.R
 \name{artdeconv}
 \alias{artdeconv}
-\title{Adaptive regularized tri-factor NMF deconvolution}
+\title{Adaptive Regularized Tri-factor NMF Deconvolution}
 \usage{
 artdeconv(
   Y,
@@ -23,7 +23,7 @@ artdeconv(
 \arguments{
 \item{Y}{the bulk matrix.}
 
-\item{Theta_0}{\eqn{m_0 \times K_0} reference matrix for the fixed part of the signature matrix.}
+\item{Theta_0}{\eqn{m_0 \times K_0} partial reference matrix that we have prior knowledge about.}
 
 \item{m0}{the number of signature genes for well characterized cell types in a tissue.}
 
@@ -57,7 +57,8 @@ A list with following items:
 }
 }
 \description{
-TODO: write a complete description of the package
+This function performs deconvolution of the bulk expression data using the ARTdeConv algorithm.
+The user should input
 }
 \seealso{
 \link{artdeconv_single_solve}
