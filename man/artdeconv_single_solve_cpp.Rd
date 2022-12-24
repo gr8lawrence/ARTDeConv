@@ -51,7 +51,7 @@ artdeconv_single_solve_cpp(
 \item{tol}{the tolerance parameter for the convergence criterion of ARTdeConv. The default is \code{1e-5}.}
 }
 \description{
-This is the core function that will run ARTdeConv once under a set of initial values written in C++
+This is the core function that will run ARTdeConv once under a set of initial values. It is written in C++
 and integrated in R through Rcpp and RcppArmadillo. Users running this function should provide their own
 initial values in the input. Otherwise, the required parameters are the same as the main ARTdeConv function
 with restarts.

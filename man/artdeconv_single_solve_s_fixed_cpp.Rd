@@ -48,8 +48,8 @@ artdeconv_single_solve_s_fixed_cpp(
 \item{tol}{the tolerance parameter for the convergence criterion of ARTdeConv. The default is \code{1e-5}.}
 }
 \description{
-This is the core function that will run ARTdeConv once under a set of initial values written in C++, but with the legacy bi-factor assumption (that the scale matrix S is fixed),
-and integrated in R through Rcpp and RcppArmadillo. It can technically increase the speed since S will not be updated,
+This is the core function that will run ARTdeConv once under a set of initial values, but with the legacy bi-factor assumption (that the scale matrix S is fixed).
+It is written in C++ and integrated in R through Rcpp and RcppArmadillo. It can technically increase the speed since S will not be updated,
 but should be only used when the user is confident that S can be represented by the identity matrix. Users running this function should provide their own
 initial values in the input. Otherwise, the required parameters are the same as the main ARTdeConv function
 with restarts.

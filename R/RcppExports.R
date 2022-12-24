@@ -39,7 +39,7 @@ obj_fun_cpp <- function(Y, Y_hat, Theta_hat, P_hat, m0, k0, Theta_0, Delta, Delt
 
 #' Core ARTdeConv Function For One Set of Initial Values (in C++)
 #'
-#' This is the core function that will run ARTdeConv once under a set of initial values written in C++ 
+#' This is the core function that will run ARTdeConv once under a set of initial values. It is written in C++ 
 #' and integrated in R through Rcpp and RcppArmadillo. Users running this function should provide their own 
 #' initial values in the input. Otherwise, the required parameters are the same as the main ARTdeConv function
 #' with restarts.
@@ -65,8 +65,8 @@ artdeconv_single_solve_cpp <- function(Y, Theta_0, Theta_it, s_it, P_it, m0, k0,
 
 #' Core ARTdeConv Function For One Set of Initial Values Assuming a Fixed S (in C++)
 #'
-#' This is the core function that will run ARTdeConv once under a set of initial values written in C++, but with the legacy bi-factor assumption (that the scale matrix S is fixed),
-#' and integrated in R through Rcpp and RcppArmadillo. It can technically increase the speed since S will not be updated,
+#' This is the core function that will run ARTdeConv once under a set of initial values, but with the legacy bi-factor assumption (that the scale matrix S is fixed). 
+#' It is written in C++ and integrated in R through Rcpp and RcppArmadillo. It can technically increase the speed since S will not be updated,
 #' but should be only used when the user is confident that S can be represented by the identity matrix. Users running this function should provide their own 
 #' initial values in the input. Otherwise, the required parameters are the same as the main ARTdeConv function
 #' with restarts.

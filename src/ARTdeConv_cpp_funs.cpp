@@ -131,7 +131,7 @@ double obj_fun_cpp(const arma::mat Y, const arma::mat Y_hat, const arma::mat The
 
 //' Core ARTdeConv Function For One Set of Initial Values (in C++)
 //'
-//' This is the core function that will run ARTdeConv once under a set of initial values written in C++ 
+//' This is the core function that will run ARTdeConv once under a set of initial values. It is written in C++ 
 //' and integrated in R through Rcpp and RcppArmadillo. Users running this function should provide their own 
 //' initial values in the input. Otherwise, the required parameters are the same as the main ARTdeConv function
 //' with restarts.
@@ -231,7 +231,6 @@ Rcpp::List artdeconv_single_solve_cpp(const arma::mat Y, const arma::mat Theta_0
 
   // record the time and print it
   double time_elapsed = timer.toc();
-  // cout << "number of seconds: " << time_elapsed << endl;
   
   // check if the weights are uniform
   arma::vec uni_v(k, fill::ones);
@@ -256,8 +255,8 @@ Rcpp::List artdeconv_single_solve_cpp(const arma::mat Y, const arma::mat Theta_0
 
 //' Core ARTdeConv Function For One Set of Initial Values Assuming a Fixed S (in C++)
 //'
-//' This is the core function that will run ARTdeConv once under a set of initial values written in C++, but with the legacy bi-factor assumption (that the scale matrix S is fixed),
-//' and integrated in R through Rcpp and RcppArmadillo. It can technically increase the speed since S will not be updated,
+//' This is the core function that will run ARTdeConv once under a set of initial values, but with the legacy bi-factor assumption (that the scale matrix S is fixed). 
+//' It is written in C++ and integrated in R through Rcpp and RcppArmadillo. It can technically increase the speed since S will not be updated,
 //' but should be only used when the user is confident that S can be represented by the identity matrix. Users running this function should provide their own 
 //' initial values in the input. Otherwise, the required parameters are the same as the main ARTdeConv function
 //' with restarts.
