@@ -122,7 +122,7 @@ double obj_fun_cpp(const arma::mat Y, const arma::mat Y_hat, const arma::mat The
     0.5 * alpha_2 * pow(norm(Delta_c % Theta_hat, "fro"), 2);
   
   // calculate the objective function with the P-part
-  arma::mat W_inv = arma::diagmat(1 / ranges);
+  arma::mat W_inv = arma::diagmat(1 / sqrt(ranges));
   for(int i = 0; i < n; ++i) {
     obj += 0.5 * beta * pow(norm(W_inv * (P_hat.col(i) - meds), 2), 2);
   }
