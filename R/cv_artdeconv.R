@@ -29,6 +29,15 @@ cv_artdeconv <- function(Y, Theta_0, m0, k0, meds, ranges, alpha1_range, alpha2_
   ## get all parameter combinations
   tune_grid <- expand.grid(alpha1 = alpha1_range, alpha2 = alpha2_range, beta = beta_range)
   
+  ## print the total number of grid value combinations if verbose = TRUE
+  if (verbose) message(
+    paste("In the tuning grid, there are", 
+          length(alpha1_range), "value(s) for alpha1,", 
+          length(alpha2_range), "for alpha2, and",
+          length(beta_range), "for beta, for a total of",
+          nrow(tune_grid), "combinations.")
+  )
+  
   ## determine the fold ids
   fold_id <- sample(x = rep(seq(n_fold), ceiling(ncol(Y)/n_fold)), size = ncol(Y)) # assign fold id
   

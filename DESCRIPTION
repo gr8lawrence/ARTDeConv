@@ -1,10 +1,10 @@
 Package: ARTdeConv
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Title: Adaptive Regularized Tri-factor Non-negative Matrix Factorization for Cell Type Deconvolution
+Version: 0.8.0
 Authors@R: 
     person("Tianyi", "Liu", , "tianyi96@live.unc.edu", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: Adaptive Regularized Tri-factor nonnegative matrix factorization method for flexible bulk-level gene expression DeConvolution.
+           comment = c(ORCID = "0000-0002-2484-2478"))
+Description: Perform deconvolution on bulk gene expression data when one or more cell types' gene signatures are unknown a priori, and when external information such as medians and ranges of proportions of all cell types are available. 
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
