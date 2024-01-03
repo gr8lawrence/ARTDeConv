@@ -1,29 +1,36 @@
 #' Cross Validation Function For Finding Optimal Tuning Parameters For ARTdeConv
 #' 
-#' @param Y the bulk matrix.
-#' @param Theta_0 \eqn{m_0 \times K_0} reference matrix for the fixed part of the signature matrix.
-#' @param m0 the number of signature genes for well characterized cell types in a tissue.
-#' @param k0 the number of well characterized cell types in a tissue.
-#' @param meds a vector of length \eqn{K} of pre-specified medians of cell proportions.
-#' @param ranges a vector of length \eqn{K} of pre-specified ranges of cell-type proportions (1/ranges as weights for regularization parameters).
-#' @param alpha1_range a vector of tuning parameters for \eqn{\alpha_1}.
-#' @param alpha2_range a vector of tuning parameters for \eqn{\alpha_2}.
-#' @param beta_range a vector of tuning parameters for \eqn{\beta}.
-#' @param n_fold the number of folds of the cross validation; default is 5.
-#' @param n_start the number of restart for ARTdeConv in each cross validation fold; default is 10.
-#' @param parallel a logical value of whether to run ARTdeConv in parallel; default is `TRUE`.
-#' @param verbose a logical value: if `TRUE`, will print a message of all optimal tuning parameters after the cross validaiton is done; default is `TRUE`.
-#' @param seed a numerical seed to ensure the reproducibility of results; default is 100.
-#' @param ... other parameters for the [artdeconv] function.
+#' @param Y The bulk matrix.
+#' @param Theta_0 The \eqn{m \times K} reference signature matrix. The last \eqn{K_0} columns for cell types with unknown reference gene expression should be padded with 0s.
+#' @param m0 The number of signature genes for well characterized cell types in a tissue. Must satisfy \eqn{m_0 \leq m}. The default value is \eqn{m} (`nrow(Theta_0)`).
+#' @param k0 The number of well characterized cell types in a tissue. Must satisfy \eqn{K_0 < K}.
+#' @param meds A vector of length \eqn{K} of pre-specified medians of cell proportions.
+#' @param ranges A vector of length \eqn{K} of pre-specified ranges of cell-type proportions (1/ranges as weights for regularization parameters).
+#' @param alpha1_range A vector of tuning parameters for \eqn{\alpha_1}.
+#' @param alpha2_range A vector of tuning parameters for \eqn{\alpha_2}.
+#' @param beta_range A vector of tuning parameters for \eqn{\beta}.
+#' @param n_fold The number of folds of the cross validation; default is 5.
+#' @param n_start The number of restart for ARTdeConv in each cross validation fold; default is 10.
+#' @param parallel A logical value of whether to run ARTdeConv in parallel; default is `TRUE`.
+#' @param verbose A logical value: if `TRUE`, will print a message of all optimal tuning parameters after the cross validaiton is done; default is `TRUE`.
+#' @param seed A numerical seed to ensure the reproducibility of results; default is 100.
+#' @param seed_control A logical value dictating whether seed is controlled in the foreach loop during CV; default is `TRUE`.
+#' @param ... Other parameters for the [artdeconv] function.
+#' 
+#' @return A list with following items:
+#' * alpha_1: the chosen \eqn{\alpha_1} value from the CV;
+#' * alpha_2: the chosen \eqn{\alpha_2} value from the CV;
+#' * beta: the chosen \eqn{\beta} value from the CV;
+#' * error: the CV error under the best tuning parameter selections. 
 #' 
 #' @importFrom nnls nnls
 #' @importFrom progress progress_bar
 #' 
-#' @seealso [artdeconv] [artdeconv_for_cv] 
+#' @seealso [artdeconv]
 #' 
 #' @export
 
-cv_artdeconv <- function(Y, Theta_0, m0, k0, meds, ranges, alpha1_range, alpha2_range, beta_range, n_fold = 5, n_start = 10, parallel = TRUE, verbose = TRUE, seed = 100, ...) {
+cv_artdeconv <- function(Y, Theta_0, m0 = nrow(Theta_0), k0, meds, ranges, alpha1_range, alpha2_range, beta_range, n_fold = 5, n_start = 10, parallel = TRUE, verbose = TRUE, seed = 100, seed_control = TRUE, ...) {
   set.seed(seed)
   
   ## get all parameter combinations
@@ -45,7 +52,7 @@ cv_artdeconv <- function(Y, Theta_0, m0, k0, meds, ranges, alpha1_range, alpha2_
   message('Begin cross validation...')
   cv_errors_matrix <- foreach::foreach(i = 1:nrow(tune_grid), .combine = 'cbind') %:%  
     foreach::foreach(j = 1:n_fold, .combine = 'c') %dopar% {
-      
+      if (seed_control) set.seed(seed + j + (i - 1) * n_fold)
       ## the inner loop to calculate total CV error for this param combination
       holdout_id <- (fold_id == j) # locate the ids for the test set
       train_res <- artdeconv(Y = Y[, !holdout_id], Theta_0 = Theta_0, m0 = m0, k0 = k0, meds = meds, ranges = ranges, alpha1 = tune_grid$alpha1[i], alpha2 = tune_grid$alpha2[i], beta = tune_grid$beta[i], n_start = n_start, parallel = FALSE, ...)

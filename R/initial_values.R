@@ -3,15 +3,19 @@
 #' Generate one set of \eqn{(\mathbf{\Theta}, \mathbf{s}, \mathbf{P})} based on the problem sizes and 
 #' known part of \eqn{\mathbf{\Theta}}. Details can be found in Liu et al.
 #'
-#' @param Y_star bulk expression matrix
-#' @param Theta_0 the known part of \eqn{\mathbf{\Theta}}
-#' @param meds a vector of length \eqn{K} of the pre-specified medians of cell type proportions
-#' @param m the total number of genes in the deconvolution
-#' @param k the total number of cell types (CTs) in the deconvolution
-#' @param m0 the total number of genes of the known CTs in the deconvolution (\eqn{\leq m})
-#' @param k0 the total number of known CTs in the deconvolution (\eqn{\leq K})
+#' @param Y_star The bulk expression matrix.
+#' @param Theta_0 The \eqn{m \times K} reference signature matrix. The last \eqn{K_0} columns for cell types with unknown reference gene expression should be padded with 0s.
+#' @param meds A vector of length \eqn{K} of the pre-specified medians of cell type proportions.
+#' @param m The total number of genes in the deconvolution.
+#' @param k The total number of cell types (CTs) in the deconvolution.
+#' @param m0 The total number of genes of the known CTs in the deconvolution (\eqn{\leq m}, the default is \eqn{m}).
+#' @param k0 The total number of known CTs in the deconvolution (\eqn{\leq K}).
 #' 
-#' @return A list of the initial values for \eqn{(\mathbf{\Theta}, \mathbf{s}, \mathbf{P})}.
+#' @return A list of the initial values for \eqn{(\mathbf{\Theta}, \mathbf{s}, \mathbf{P})}:
+#'  * Theta: \eqn{\mathbf{\Theta}^0};
+#'  * s: \eqn{\mathbf{s}^0};
+#'  * P: \eqn{\mathbf{P}^0}.
+#' 
 #' @export
 
 get_initials <- function(Y_star, Theta_0, meds, m, n, k, m0, k0) {

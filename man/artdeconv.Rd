@@ -7,7 +7,7 @@
 artdeconv(
   Y,
   Theta_0,
-  m0,
+  m0 = nrow(Theta_0),
   k0,
   meds,
   ranges,
@@ -21,31 +21,31 @@ artdeconv(
 )
 }
 \arguments{
-\item{Y}{the bulk matrix.}
+\item{Y}{The bulk matrix.}
 
-\item{Theta_0}{\eqn{m_0 \times K_0} partial reference matrix that we have prior knowledge about.}
+\item{Theta_0}{The \eqn{m_0 \times K} reference signature matrix. The last \eqn{K_0} columns for cell types with unknown reference gene expression should be padded with 0s.}
 
-\item{m0}{the number of signature genes for well characterized cell types in a tissue.}
+\item{m0}{The number of signature genes for well characterized cell types in a tissue. Must satisfy \eqn{m_0 <= m}. The default value is \eqn{m} (\code{nrow(Theta_0)}).}
 
-\item{k0}{the number of well characterized cell types in a tissue.}
+\item{k0}{The number of well characterized cell types in a tissue. Must satisfy \eqn{K_0 < K}.}
 
-\item{meds}{a vector of length \eqn{K} of pre-specified medians of cell proportions.}
+\item{meds}{A vector of length \eqn{K} of pre-specified medians of cell proportions.}
 
-\item{ranges}{a vector of length \eqn{K} of pre-specified ranges of cell-type proportions (1/\code{ranges} is used as weights for regularization parameters).}
+\item{ranges}{A vector of length \eqn{K} of pre-specified ranges of cell-type proportions (1/\code{ranges} is used as weights for regularization parameters).}
 
-\item{alpha1}{the tuning parameter for regularizing the known part of Theta.}
+\item{alpha1}{The tuning parameter for regularizing the known part of Theta.}
 
-\item{alpha2}{the tuning parameter for regularizing the unknown part of Theta.}
+\item{alpha2}{The tuning parameter for regularizing the unknown part of Theta.}
 
-\item{beta}{the tuning parameter for regularizing P.}
+\item{beta}{The tuning parameter for regularizing P.}
 
-\item{n_start}{an integer indicating the number of restarts of the algorithm; default value is 10.}
+\item{n_start}{An integer indicating the number of restarts of the algorithm; default value is 10.}
 
-\item{parallel}{a logical value indicating whether or not to run \link{artdeconv} in parallel; default is \code{TRUE}.}
+\item{parallel}{A logical value indicating whether or not to run \link{artdeconv} in parallel; default is \code{TRUE}.}
 
-\item{s_fixed}{a logical value indicating whether the cell size matrix \eqn{S} is coerced to be the identity matrix; default is \code{FALSE}.}
+\item{s_fixed}{A logical value indicating whether the cell size matrix \eqn{S} is coerced to be the identity matrix; default is \code{FALSE}.}
 
-\item{...}{other parameters that can be passed to the function (see \link{artdeconv_single_solve_cpp}).}
+\item{...}{Other parameters that can be passed to the function (see \link{artdeconv_single_solve_cpp}).}
 }
 \value{
 A list with following items:

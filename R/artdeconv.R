@@ -7,19 +7,19 @@ NULL
 #' This function performs deconvolution of the bulk expression data using the ARTdeConv algorithm. 
 #' The user should input 
 #' 
-#' @param Y the bulk matrix.
-#' @param Theta_0 \eqn{m_0 \times K_0} partial reference matrix that we have prior knowledge about.
-#' @param m0 the number of signature genes for well characterized cell types in a tissue.
-#' @param k0 the number of well characterized cell types in a tissue.
-#' @param meds a vector of length \eqn{K} of pre-specified medians of cell proportions.
-#' @param ranges a vector of length \eqn{K} of pre-specified ranges of cell-type proportions (1/`ranges` is used as weights for regularization parameters).
-#' @param alpha1 the tuning parameter for regularizing the known part of Theta.
-#' @param alpha2 the tuning parameter for regularizing the unknown part of Theta.
-#' @param beta the tuning parameter for regularizing P.
-#' @param n_start an integer indicating the number of restarts of the algorithm; default value is 10.
-#' @param parallel a logical value indicating whether or not to run [artdeconv] in parallel; default is `TRUE`. 
-#' @param s_fixed a logical value indicating whether the cell size matrix \eqn{S} is coerced to be the identity matrix; default is `FALSE`.
-#' @param ... other parameters that can be passed to the function (see [artdeconv_single_solve_cpp]).
+#' @param Y The bulk matrix.
+#' @param Theta_0 The \eqn{m_0 \times K} reference signature matrix. The last \eqn{K_0} columns for cell types with unknown reference gene expression should be padded with 0s.
+#' @param m0 The number of signature genes for well characterized cell types in a tissue. Must satisfy \eqn{m_0 <= m}. The default value is \eqn{m} (`nrow(Theta_0)`).
+#' @param k0 The number of well characterized cell types in a tissue. Must satisfy \eqn{K_0 < K}.
+#' @param meds A vector of length \eqn{K} of pre-specified medians of cell proportions.
+#' @param ranges A vector of length \eqn{K} of pre-specified ranges of cell-type proportions (1/`ranges` is used as weights for regularization parameters).
+#' @param alpha1 The tuning parameter for regularizing the known part of Theta.
+#' @param alpha2 The tuning parameter for regularizing the unknown part of Theta.
+#' @param beta The tuning parameter for regularizing P.
+#' @param n_start An integer indicating the number of restarts of the algorithm; default value is 10.
+#' @param parallel A logical value indicating whether or not to run [artdeconv] in parallel; default is `TRUE`. 
+#' @param s_fixed A logical value indicating whether the cell size matrix \eqn{S} is coerced to be the identity matrix; default is `FALSE`.
+#' @param ... Other parameters that can be passed to the function (see [artdeconv_single_solve_cpp]).
 #' 
 #' @seealso [artdeconv_single_solve_cpp]
 #' 
@@ -33,7 +33,7 @@ NULL
 #' @importFrom foreach %dopar% 
 #' @export
 
-artdeconv <- function(Y, Theta_0, m0, k0, meds, ranges, alpha1, alpha2, beta, n_start = 10, parallel = TRUE, s_fixed = FALSE, ...) {
+artdeconv <- function(Y, Theta_0, m0 = nrow(Theta_0), k0, meds, ranges, alpha1, alpha2, beta, n_start = 10, parallel = TRUE, s_fixed = FALSE, ...) {
   ## parameters
   m <- nrow(Y)
   n <- ncol(Y)

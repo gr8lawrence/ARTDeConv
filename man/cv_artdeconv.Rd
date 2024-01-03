@@ -7,7 +7,7 @@
 cv_artdeconv(
   Y,
   Theta_0,
-  m0,
+  m0 = nrow(Theta_0),
   k0,
   meds,
   ranges,
@@ -19,43 +19,55 @@ cv_artdeconv(
   parallel = TRUE,
   verbose = TRUE,
   seed = 100,
+  seed_control = TRUE,
   ...
 )
 }
 \arguments{
-\item{Y}{the bulk matrix.}
+\item{Y}{The bulk matrix.}
 
-\item{Theta_0}{\eqn{m_0 \times K_0} reference matrix for the fixed part of the signature matrix.}
+\item{Theta_0}{The \eqn{m \times K} reference signature matrix. The last \eqn{K_0} columns for cell types with unknown reference gene expression should be padded with 0s.}
 
-\item{m0}{the number of signature genes for well characterized cell types in a tissue.}
+\item{m0}{The number of signature genes for well characterized cell types in a tissue. Must satisfy \eqn{m_0 \leq m}. The default value is \eqn{m} (\code{nrow(Theta_0)}).}
 
-\item{k0}{the number of well characterized cell types in a tissue.}
+\item{k0}{The number of well characterized cell types in a tissue. Must satisfy \eqn{K_0 < K}.}
 
-\item{meds}{a vector of length \eqn{K} of pre-specified medians of cell proportions.}
+\item{meds}{A vector of length \eqn{K} of pre-specified medians of cell proportions.}
 
-\item{ranges}{a vector of length \eqn{K} of pre-specified ranges of cell-type proportions (1/ranges as weights for regularization parameters).}
+\item{ranges}{A vector of length \eqn{K} of pre-specified ranges of cell-type proportions (1/ranges as weights for regularization parameters).}
 
-\item{alpha1_range}{a vector of tuning parameters for \eqn{\alpha_1}.}
+\item{alpha1_range}{A vector of tuning parameters for \eqn{\alpha_1}.}
 
-\item{alpha2_range}{a vector of tuning parameters for \eqn{\alpha_2}.}
+\item{alpha2_range}{A vector of tuning parameters for \eqn{\alpha_2}.}
 
-\item{beta_range}{a vector of tuning parameters for \eqn{\beta}.}
+\item{beta_range}{A vector of tuning parameters for \eqn{\beta}.}
 
-\item{n_fold}{the number of folds of the cross validation; default is 5.}
+\item{n_fold}{The number of folds of the cross validation; default is 5.}
 
-\item{n_start}{the number of restart for ARTdeConv in each cross validation fold; default is 10.}
+\item{n_start}{The number of restart for ARTdeConv in each cross validation fold; default is 10.}
 
-\item{parallel}{a logical value of whether to run ARTdeConv in parallel; default is \code{TRUE}.}
+\item{parallel}{A logical value of whether to run ARTdeConv in parallel; default is \code{TRUE}.}
 
-\item{verbose}{a logical value: if \code{TRUE}, will print a message of all optimal tuning parameters after the cross validaiton is done; default is \code{TRUE}.}
+\item{verbose}{A logical value: if \code{TRUE}, will print a message of all optimal tuning parameters after the cross validaiton is done; default is \code{TRUE}.}
 
-\item{seed}{a numerical seed to ensure the reproducibility of results; default is 100.}
+\item{seed}{A numerical seed to ensure the reproducibility of results; default is 100.}
 
-\item{...}{other parameters for the \link{artdeconv} function.}
+\item{seed_control}{A logical value dictating whether seed is controlled in the foreach loop during CV; default is \code{TRUE}.}
+
+\item{...}{Other parameters for the \link{artdeconv} function.}
+}
+\value{
+A list with following items:
+\itemize{
+\item alpha_1: the chosen \eqn{\alpha_1} value from the CV;
+\item alpha_2: the chosen \eqn{\alpha_2} value from the CV;
+\item beta: the chosen \eqn{\beta} value from the CV;
+\item error: the CV error under the best tuning parameter selections.
+}
 }
 \description{
 Cross Validation Function For Finding Optimal Tuning Parameters For ARTdeConv
 }
 \seealso{
-\link{artdeconv} \link{artdeconv_for_cv}
+\link{artdeconv}
 }

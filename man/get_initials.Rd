@@ -7,22 +7,27 @@
 get_initials(Y_star, Theta_0, meds, m, n, k, m0, k0)
 }
 \arguments{
-\item{Y_star}{bulk expression matrix}
+\item{Y_star}{The bulk expression matrix.}
 
-\item{Theta_0}{the known part of \eqn{\mathbf{\Theta}}}
+\item{Theta_0}{The \eqn{m \times K} reference signature matrix. The last \eqn{K_0} columns for cell types with unknown reference gene expression should be padded with 0s.}
 
-\item{meds}{a vector of length \eqn{K} of the pre-specified medians of cell type proportions}
+\item{meds}{A vector of length \eqn{K} of the pre-specified medians of cell type proportions.}
 
-\item{m}{the total number of genes in the deconvolution}
+\item{m}{The total number of genes in the deconvolution.}
 
-\item{k}{the total number of cell types (CTs) in the deconvolution}
+\item{k}{The total number of cell types (CTs) in the deconvolution.}
 
-\item{m0}{the total number of genes of the known CTs in the deconvolution (\eqn{\leq m})}
+\item{m0}{The total number of genes of the known CTs in the deconvolution (\eqn{\leq m}, the default is \eqn{m}).}
 
-\item{k0}{the total number of known CTs in the deconvolution (\eqn{\leq K})}
+\item{k0}{The total number of known CTs in the deconvolution (\eqn{\leq K}).}
 }
 \value{
-A list of the initial values for \eqn{(\mathbf{\Theta}, \mathbf{s}, \mathbf{P})}.
+A list of the initial values for \eqn{(\mathbf{\Theta}, \mathbf{s}, \mathbf{P})}:
+\itemize{
+\item Theta: \eqn{\mathbf{\Theta}^0};
+\item s: \eqn{\mathbf{s}^0};
+\item P: \eqn{\mathbf{P}^0}.
+}
 }
 \description{
 Generate one set of \eqn{(\mathbf{\Theta}, \mathbf{s}, \mathbf{P})} based on the problem sizes and
