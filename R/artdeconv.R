@@ -1,3 +1,7 @@
+#' @useDynLib ARTdeConv, .registration = TRUE
+#' @importFrom Rcpp sourceCpp
+NULL
+
 #' Adaptive Regularized Tri-factor NMF Deconvolution
 #' 
 #' This function performs deconvolution of the bulk expression data using the ARTdeConv algorithm. 
@@ -17,7 +21,7 @@
 #' @param s_fixed a logical value indicating whether the cell size matrix \eqn{S} is coerced to be the identity matrix; default is `FALSE`.
 #' @param ... other parameters that can be passed to the function (see [artdeconv_single_solve]).
 #' 
-#' @seealso [artdeconv_single_solve]
+#' @seealso [artdeconv_single_solve_cpp]
 #' 
 #' @return A list with following items:
 #' * Y_hat: the estimated Y from the product of estimated factors;

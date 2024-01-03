@@ -61,5 +61,5 @@ This function performs deconvolution of the bulk expression data using the ARTde
 The user should input
 }
 \seealso{
-\link{artdeconv_single_solve}
+\link{artdeconv_single_solve_cpp}
 }

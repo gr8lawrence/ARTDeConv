@@ -144,6 +144,7 @@ double obj_fun_cpp(const arma::mat Y, const arma::mat Y_hat, const arma::mat The
 //' @param beta the tuning parameter for regularizing P.
 //' @param max_iter the maximal number of iterations this core function will run. The default is `1e5`.
 //' @param tol the tolerance parameter for the convergence criterion of ARTdeConv. The default is `1e-5`.
+//' @export
 // [[Rcpp::export]]
 Rcpp::List artdeconv_single_solve_cpp(const arma::mat Y, const arma::mat Theta_0, const arma::mat Theta_it, const arma::vec s_it, const arma::mat P_it, const int m0, const int k0, const arma::vec meds, const arma::vec ranges, const double alpha1, const double alpha2, const double beta, const int max_iter = 1e5, const double tol = 1e-5) {
   
@@ -267,6 +268,7 @@ Rcpp::List artdeconv_single_solve_cpp(const arma::mat Y, const arma::mat Theta_0
 //' @param beta the tuning parameter for regularizing P.
 //' @param max_iter the maximal number of iterations this core function will run. The default is `1e5`.
 //' @param tol the tolerance parameter for the convergence criterion of ARTdeConv. The default is `1e-5`.
+//' @export
 // [[Rcpp::export]]
 Rcpp::List artdeconv_single_solve_s_fixed_cpp(const arma::mat Y, const arma::mat Theta_0, const arma::mat Theta_it, const arma::mat P_it, const int m0, const int k0, const arma::vec meds, const arma::vec ranges, const double alpha1, const double alpha2, const double beta, const int max_iter = 1e5, const double tol = 1e-5) {
   
