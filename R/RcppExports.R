@@ -2,37 +2,31 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #' Multiplicative Update of P
-#' @export 
 mu_P_cpp <- function(Y, Theta, s, meds, P, beta, wt) {
     .Call('_ARTdeConv_mu_P_cpp', PACKAGE = 'ARTdeConv', Y, Theta, s, meds, P, beta, wt)
 }
 
 #' Multiplicative Update of Theta
-#' @export 
 mu_Theta_cpp <- function(Y, s, P, Theta_0, Delta, Delta_c, Theta, alpha1, alpha2) {
     .Call('_ARTdeConv_mu_Theta_cpp', PACKAGE = 'ARTdeConv', Y, s, P, Theta_0, Delta, Delta_c, Theta, alpha1, alpha2)
 }
 
 #' Multiplicative Update of S
-#' @export 
 mu_s_cpp <- function(Y, Theta, s, P) {
     .Call('_ARTdeConv_mu_s_cpp', PACKAGE = 'ARTdeConv', Y, Theta, s, P)
 }
 
 #' Function for getting the Delta matrix
-#' @export 
 get_Delta_cpp <- function(k, k0, m, m0) {
     .Call('_ARTdeConv_get_Delta_cpp', PACKAGE = 'ARTdeConv', k, k0, m, m0)
 }
 
 #' Function for getting the complement of the Delta matrix
-#' @export 
 get_Delta_c_cpp <- function(Delta) {
     .Call('_ARTdeConv_get_Delta_c_cpp', PACKAGE = 'ARTdeConv', Delta)
 }
 
 #' ARTdeConv objective function
-#' @export 
 obj_fun_cpp <- function(Y, Y_hat, Theta_hat, P_hat, m0, k0, Theta_0, Delta, Delta_c, meds, ranges, alpha_1, alpha_2, beta) {
     .Call('_ARTdeConv_obj_fun_cpp', PACKAGE = 'ARTdeConv', Y, Y_hat, Theta_hat, P_hat, m0, k0, Theta_0, Delta, Delta_c, meds, ranges, alpha_1, alpha_2, beta)
 }
@@ -58,7 +52,6 @@ obj_fun_cpp <- function(Y, Y_hat, Theta_hat, P_hat, m0, k0, Theta_0, Delta, Delt
 #' @param beta the tuning parameter for regularizing P.
 #' @param max_iter the maximal number of iterations this core function will run. The default is `1e5`.
 #' @param tol the tolerance parameter for the convergence criterion of ARTdeConv. The default is `1e-5`.
-#' @export 
 artdeconv_single_solve_cpp <- function(Y, Theta_0, Theta_it, s_it, P_it, m0, k0, meds, ranges, alpha1, alpha2, beta, max_iter = 1e5L, tol = 1e-5) {
     .Call('_ARTdeConv_artdeconv_single_solve_cpp', PACKAGE = 'ARTdeConv', Y, Theta_0, Theta_it, s_it, P_it, m0, k0, meds, ranges, alpha1, alpha2, beta, max_iter, tol)
 }
@@ -84,7 +77,6 @@ artdeconv_single_solve_cpp <- function(Y, Theta_0, Theta_it, s_it, P_it, m0, k0,
 #' @param beta the tuning parameter for regularizing P.
 #' @param max_iter the maximal number of iterations this core function will run. The default is `1e5`.
 #' @param tol the tolerance parameter for the convergence criterion of ARTdeConv. The default is `1e-5`.
-#' @export 
 artdeconv_single_solve_s_fixed_cpp <- function(Y, Theta_0, Theta_it, P_it, m0, k0, meds, ranges, alpha1, alpha2, beta, max_iter = 1e5L, tol = 1e-5) {
     .Call('_ARTdeConv_artdeconv_single_solve_s_fixed_cpp', PACKAGE = 'ARTdeConv', Y, Theta_0, Theta_it, P_it, m0, k0, meds, ranges, alpha1, alpha2, beta, max_iter, tol)
 }

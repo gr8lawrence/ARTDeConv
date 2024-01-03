@@ -6,7 +6,6 @@ using namespace Rcpp;
 using namespace arma;
 
 //' Multiplicative Update of P
-//' @export 
 // [[Rcpp::export]]
 arma::mat mu_P_cpp(const arma::mat Y, const arma::mat Theta, const arma::vec s, const arma::vec meds, arma::mat P, const double beta, const arma::vec wt) {
   
@@ -32,7 +31,6 @@ arma::mat mu_P_cpp(const arma::mat Y, const arma::mat Theta, const arma::vec s, 
 }
 
 //' Multiplicative Update of Theta
-//' @export 
 // [[Rcpp::export]]
 arma::mat mu_Theta_cpp(const arma::mat Y, const arma::vec s, const arma::mat P, const arma::mat Theta_0, const arma::mat Delta, const arma::mat Delta_c, arma::mat Theta, const double alpha1, const double alpha2) {
   
@@ -53,7 +51,6 @@ arma::mat mu_Theta_cpp(const arma::mat Y, const arma::vec s, const arma::mat P, 
 }
 
 //' Multiplicative Update of S
-//' @export 
 // [[Rcpp::export]]
 arma::vec mu_s_cpp(const arma::mat Y, const arma::mat Theta, arma::vec s, const arma::mat P) {
   
@@ -83,7 +80,6 @@ arma::vec mu_s_cpp(const arma::mat Y, const arma::mat Theta, arma::vec s, const 
 }
 
 //' Function for getting the Delta matrix
-//' @export 
 // [[Rcpp::export]]
 arma::mat get_Delta_cpp (const int k, const int k0, const int m, const int m0) {
   arma::mat Delta(m, k, fill::zeros);
@@ -96,7 +92,6 @@ arma::mat get_Delta_cpp (const int k, const int k0, const int m, const int m0) {
 }
 
 //' Function for getting the complement of the Delta matrix
-//' @export 
 // [[Rcpp::export]]
 arma::mat get_Delta_c_cpp (const arma::mat Delta) {
   int m = Delta.n_rows;
@@ -107,7 +102,6 @@ arma::mat get_Delta_c_cpp (const arma::mat Delta) {
 }
 
 //' ARTdeConv objective function
-//' @export 
 // [[Rcpp::export]]
 double obj_fun_cpp(const arma::mat Y, const arma::mat Y_hat, const arma::mat Theta_hat, const arma::mat P_hat, const int m0, const int k0, const arma::mat Theta_0, const arma::mat Delta, const arma::mat Delta_c, const arma::vec meds, const arma::vec ranges, const double alpha_1, const double alpha_2, const double beta) {
   
@@ -150,7 +144,6 @@ double obj_fun_cpp(const arma::mat Y, const arma::mat Y_hat, const arma::mat The
 //' @param beta the tuning parameter for regularizing P.
 //' @param max_iter the maximal number of iterations this core function will run. The default is `1e5`.
 //' @param tol the tolerance parameter for the convergence criterion of ARTdeConv. The default is `1e-5`.
-//' @export 
 // [[Rcpp::export]]
 Rcpp::List artdeconv_single_solve_cpp(const arma::mat Y, const arma::mat Theta_0, const arma::mat Theta_it, const arma::vec s_it, const arma::mat P_it, const int m0, const int k0, const arma::vec meds, const arma::vec ranges, const double alpha1, const double alpha2, const double beta, const int max_iter = 1e5, const double tol = 1e-5) {
   
@@ -274,7 +267,6 @@ Rcpp::List artdeconv_single_solve_cpp(const arma::mat Y, const arma::mat Theta_0
 //' @param beta the tuning parameter for regularizing P.
 //' @param max_iter the maximal number of iterations this core function will run. The default is `1e5`.
 //' @param tol the tolerance parameter for the convergence criterion of ARTdeConv. The default is `1e-5`.
-//' @export 
 // [[Rcpp::export]]
 Rcpp::List artdeconv_single_solve_s_fixed_cpp(const arma::mat Y, const arma::mat Theta_0, const arma::mat Theta_it, const arma::mat P_it, const int m0, const int k0, const arma::vec meds, const arma::vec ranges, const double alpha1, const double alpha2, const double beta, const int max_iter = 1e5, const double tol = 1e-5) {
   
