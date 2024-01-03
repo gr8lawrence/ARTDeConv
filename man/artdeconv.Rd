@@ -45,7 +45,7 @@ artdeconv(
 
 \item{s_fixed}{a logical value indicating whether the cell size matrix \eqn{S} is coerced to be the identity matrix; default is \code{FALSE}.}
 
-\item{...}{other parameters that can be passed to the function (see \link{artdeconv_single_solve}).}
+\item{...}{other parameters that can be passed to the function (see \link{artdeconv_single_solve_cpp}).}
 }
 \value{
 A list with following items:
