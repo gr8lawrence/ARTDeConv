@@ -1,6 +1,6 @@
 Package: ARTdeConv
 Title: Adaptive Regularized Tri-factor Non-negative Matrix Factorization for Cell Type Deconvolution
-Version: 0.8.0
+Version: 0.8.1
 Authors@R: 
     person("Tianyi", "Liu", , "tianyi96@live.unc.edu", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-2484-2478"))

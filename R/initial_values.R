@@ -12,6 +12,7 @@
 #' @param k0 the total number of known CTs in the deconvolution (\eqn{\leq K})
 #' 
 #' @return A list of the initial values for \eqn{(\mathbf{\Theta}, \mathbf{s}, \mathbf{P})}.
+#' @export
 
 get_initials <- function(Y_star, Theta_0, meds, m, n, k, m0, k0) {
   
