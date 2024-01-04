@@ -20,7 +20,6 @@ A schematic representation of the algorithm can be found at the top. To start us
 After installing the package, the data can be viewed by
 ```R
 library(ARTdeConv)
-load(deconv_ls)
 deconv_ls
 ```
 
@@ -39,19 +38,56 @@ ARTdeConv requires the rows of the bulk matrix match those of the gene signature
 ## extract the bulk and gene signature expression
 Y = deconv_ls$bulk_mat
 Theta = deconv_ls$bulk_mat
-nrow(Y) == nrow(Theta_0) # verify the matching rows
+nrow(Y) == nrow(Theta) # verify the matching rows
 
 ## pad Theta with one column of 0 for the "others" cell type
 Theta_0 = cbind(Theta, 0)
+colnames(Theta_0) = c(colnames(Theta), "others") 
 
 ```
+> Note: both `Y` and `Theta` have to be **matrix objects** in R. ARTdeConv currently does not support other formats of the bulk and signature matrices such as `ExpressionSet`.
 
 The first step is the cross-validation (CV), which can be used to determine the tuning parameters for the final deconvolution. To speed up the process, we use parallelization. One can disuse this by specifying `parallel = FALSE` in the function itself.
 ```R
-2))
+library(foreach)
+library(doParallel)
+
+cl = parallel::makeCluster(4)
+registerDoParallel(cl)
+cv_params = cv_artdeconv(Y = Y, 
+                         Theta_0 = Theta_0,
+                         k0 = ncol(Theta), 
+                         meds = deconv_ls$M, 
+                         ranges = deconv_ls$R, 
+                         alpha1_range = 2^seq(-4, 0, 0.2), 
+                         alpha2_range = 1e-12, 
+                         beta_range = 2^seq(0, 4, 0.2),
+                         tol = 1e-4,
+                         n_fold = 4) 
 
 ```
+After CV, we can extract the best tuning parameters and pass them to one single ARTdeConv run:
 
+```R
+best_fit = artdeconv(Y = Y, 
+                     Theta_0 = Theta_0,
+                     k0 = ncol(Theta), 
+                     meds = deconv_ls$M, 
+                     ranges = deconv_ls$R, 
+                     alpha1 = cv_params$alpha1,
+                     alpha2 = cv_params$alpha2,
+                     beta = cv_params$beta,
+                     tol = 1e-4)
+```
+
+Finally, we can obtain the deconvoluted proportions in a $K \times n$ matrix, with each row corresponding to each column of `Theta_0` (in that order) and each column to that of `Y`.
+
+```R
+P_hat = best_fit$P_hat
+rownames(P_hat) = colnames(Theta_0)
+colnames(P_hat) = colnames(Y)
+P_hat
+```
 
 ## More Resources
 
@@ -60,5 +96,10 @@ The first step is the cross-validation (CV), which can be used to determine the 
 
 To cite ARTdeConv, please use:
 
+Liu, Tianyi, Quefeng Li, Xiaojing Zheng, and Fei Zou. 2023. “Adaptive Regularized Tri-Factor Non-Negative Matrix Factorization for Cell Type Deconvolution.” *bioRxiv*. https://doi.org/10.1101/2023.12.07.570631.
 
 To cite the works of Hoek et al. and Kleiveland et al., please use:
+
+Hoek, Kristen L., Parimal Samir, Leigh M. Howard, Xinnan Niu, Nripesh Prasad, Allison Galassie, Qi Liu, et al. 2015. “A Cell-Based Systems Biology Assessment of Human Blood to Monitor Immune Responses after Influenza Vaccination.” *PloS One* 10 (2): e0118528.
+
+Kleiveland, Charlotte R. 2015. *Peripheral Blood Mononuclear Cells*. Springer.
