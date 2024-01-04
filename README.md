@@ -20,6 +20,7 @@ A schematic representation of the algorithm can be found at the top. To start us
 After installing the package, the data can be viewed by
 ```R
 library(ARTdeConv)
+load(deconv_ls)
 deconv_ls
 ```
 
