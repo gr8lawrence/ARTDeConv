@@ -4,10 +4,13 @@
 
 ## Overview
 
+ARTdeConv enables the deconvolution of bulk tissue gene expression using only the gene signatures of a subset of cell types. This capability is particularly valuable for scenarios where some cell types are not easily preserved for single-cell sequencing, resulting in unavailable gene signatures. It requires additional parameters such as means and ranges of cell-type proportions to facilitate accurate deconvolution results. This document offers a quick guide to using the package and outlines the prerequisites for the algorithm to function properly.
+
+If you have any questions, feel free to create an Issue on the GitHub page or contact tianyi96@live.unc.edu.
 
 ## Installation
 
-To install the package, you can use the following code:
+To install the package, use the following code:
 ```R
 require(devtools)
 install_github("https://github.com/gr8lawrence/ARTDeConv", dependencies = TRUE)
@@ -15,15 +18,15 @@ install_github("https://github.com/gr8lawrence/ARTDeConv", dependencies = TRUE)
 
 ## Quick Start
 
-A schematic representation of the algorithm can be found at the top. To start using the algorithm, the ARTdeConv package includes an example dataset, which includes bulk expression from 8 human Peripheral Blood Mononuclear Cell (PBMC) samples from 2 subjects (HD30, HD31) across 4 time points (Day 0, 1, 3, 7). It also includes a matrix of gene signatures of 4 major PBMC cell types (T cell, B cell, monocyte, dendritic cell). A set of pre-calculated means and ranges for these cell types are also included. These data are based on the published studies of Hoek et al. (2015) and Kleiveland et al. (2015). 
+At the top, a schematic of the algorithm is available. To begin using the ARTdeConv package, an example dataset is provided, comprising bulk expression data from 8 human Peripheral Blood Mononuclear Cell (PBMC) samples from 2 subjects (HD30, HD31) across 4 time points (Day 0, 1, 3, 7). The dataset also contains a matrix of gene signatures for 4 major PBMC cell types (T cell, B cell, monocyte, dendritic cell), along with pre-calculated means and ranges for these cell types. These data are sourced or derived from the published studies of Hoek et al. (2015) and Kleiveland et al. (2015).
 
-After installing the package, the data can be viewed by
+After installing the package, the attached data can be viewed (as a list object)
 ```R
 library(ARTdeConv)
 deconv_ls
 ```
 
-To begin the deconvolution, we need to present the three ingredients shown in the schema, which are bulk expression(`deconv_ls$bulk_mat`), gene signature expression (`deconv_ls$bulk_mat`), and means and ranges of cell types (`deconv_ls$M` and `deconv_ls$R`). Following the analysis in the Section 3.2 of the ARTdeConv paper, we stipulate that there is one more "cell type" that encompasses all other cell types whose gene signatures are not measured, and we name it "others".
+To start the deconvolution, we require three elements from the schema: bulk expression (`deconv_ls$bulk_mat`), gene signature expression (`deconv_ls$bulk_mat`), and means and ranges of cell types (`deconv_ls$M` and `deconv_ls$R`). Following the analysis in Section 3.2 of the ARTdeConv paper, we introduce an additional "cell type", named "others", which encompasses all unmeasured cell types.
 
 Using the notation of the, we have the following dimension parameters:
 
@@ -32,24 +35,32 @@ Using the notation of the, we have the following dimension parameters:
  * $K$: 5 (the total number of cell types);
  * $K_0$: 4 (the number of cell types whose gene signature expression are known);
  
-ARTdeConv requires the rows of the bulk matrix match those of the gene signature matrix (which is already satisfied in the processed data). It also requires the input signature matrix contains $K$ columns for all $K$ cell types, with the first $K_0$ columns occupied by the $K_0$ cell types with known gene signature expression and the rest of the columns padded with 0. To meet this requirement, we pre-process the data:
+ARTdeConv requires that the rows of the bulk matrix correspond to those of the gene signature matrix in terms of gene features (a condition already met in the attached processed data, as shown below): 
 
 ```R
 ## extract the bulk and gene signature expression
 Y = deconv_ls$bulk_mat
 Theta = deconv_ls$bulk_mat
-nrow(Y) == nrow(Theta) # verify the matching rows
+nrow(Y) == nrow(Theta)
+all.equal(rownames(Y), rownames(Theta)) # verify the matching rows
+```
 
+> Note: both `Y` and `Theta` have to be **matrix objects** in R. ARTdeConv currently does not support other formats of the bulk and signature matrices such as `ExpressionSet`.
+
+It also requires the input signature matrix to have $K$ columns for all $K$ cell types, with the first $K_0$ columns representing the $K_0$ cell types with known gene signature expressions and the remaining columns padded with zeros. To fulfill this criterion, we preprocess the data:
+
+```R
 ## pad Theta with one column of 0 for the "others" cell type
 Theta_0 = cbind(Theta, 0)
 colnames(Theta_0) = c(colnames(Theta), "others") 
-
 ```
-> Note: both `Y` and `Theta` have to be **matrix objects** in R. ARTdeConv currently does not support other formats of the bulk and signature matrices such as `ExpressionSet`.
 
 > Note: $K_0 < K$ is a hard requirement for ARTdeConv. If $K_0 = K$ is the case for your application, we recommend using a reference-based deconvolution approach instead.
 
-The first step is the cross-validation (CV), which can be used to determine the tuning parameters for the final deconvolution. To speed up the process, we use parallelization. One can disuse this by specifying `parallel = FALSE` in the function itself.
+The initial step involves cross-validation (CV), which helps identify the tuning parameters for the ultimate deconvolution. To expedite this process, we implement parallelization, which necessitates core registration. Alternatively, setting `parallel = FALSE` in the function (also applicable to `artdeconv()` in the subsequent code chunk) allows the process to run sequentially. 
+
+The grid for tuning parameters and the number of folds also adhere to the example in Section 3.2 of the paper. The code for cross-validation is as follows:
+
 ```R
 library(foreach)
 library(doParallel)
@@ -68,7 +79,7 @@ cv_params = cv_artdeconv(Y = Y,
                          n_fold = 4) 
 
 ```
-After CV, we can extract the best tuning parameters and pass them to one single ARTdeConv run:
+After cross-validation, we can extract the optimal tuning parameters and use them for a single ARTdeConv run:
 
 ```R
 best_fit = artdeconv(Y = Y, 
@@ -93,6 +104,7 @@ P_hat
 
 ## More Resources
 
+More vignettes are under development.
 
 ## Citation
 
