@@ -55,7 +55,7 @@ Theta_0 = cbind(Theta, 0)
 colnames(Theta_0) = c(colnames(Theta), "others") 
 ```
 
-> Note: $K_0 < K$ is a hard requirement for ARTdeConv. If $K_0 = K$ is the case for your application, we recommend using a reference-based deconvolution approach instead.
+> Note: $K_0 < K$ is a hard requirement for ARTdeConv. $K$ can be determined through expert knowledge on the tissue or as $K_0 + 1$ if the cell types with missing reference are lumped together, such as in the example here. If $K_0 = K$ is the case for the application, we recommend using a reference-based deconvolution approach instead.
 
 The initial step involves cross-validation (CV), which helps identify the tuning parameters for the ultimate deconvolution. To expedite this process, we implement parallelization, which necessitates core registration. Alternatively, setting `parallel = FALSE` in the function (also applicable to `artdeconv()` in the subsequent code chunk) allows the process to run sequentially. 
 
