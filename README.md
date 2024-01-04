@@ -47,6 +47,8 @@ colnames(Theta_0) = c(colnames(Theta), "others")
 ```
 > Note: both `Y` and `Theta` have to be **matrix objects** in R. ARTdeConv currently does not support other formats of the bulk and signature matrices such as `ExpressionSet`.
 
+> Note: $K_0 < K$ is a hard requirement for ARTdeConv. If $K_0 = K$ is the case for your application, we recommend using a reference-based deconvolution approach instead.
+
 The first step is the cross-validation (CV), which can be used to determine the tuning parameters for the final deconvolution. To speed up the process, we use parallelization. One can disuse this by specifying `parallel = FALSE` in the function itself.
 ```R
 library(foreach)
