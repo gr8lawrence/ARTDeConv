@@ -21,31 +21,45 @@ artdeconv_single_solve_s_fixed_cpp(
 )
 }
 \arguments{
-\item{Y}{the bulk matrix.}
+\item{Y}{The bulk matrix.}
 
-\item{Theta_0}{the partial reference matrix that we have prior knowledge about. The unknown part of}
+\item{Theta_0}{The \eqn{m_0 \times K} reference signature matrix. The last \eqn{K_0} columns for cell types with unknown reference gene expression should be padded with 0s.}
 
-\item{Theta_it}{the initial value of Theta.}
+\item{Theta_it}{The initial value of Theta.}
 
-\item{P_it}{the initial value of P.}
+\item{P_it}{The initial value of P.}
 
-\item{m0}{the number of gene features we have prior knowledge about in \code{Theta_0}.}
+\item{m0}{The number of gene features we have prior knowledge about in \code{Theta_0}.}
 
-\item{k0}{the number of cell types whose cell-type level expression we have prior knowledge about in \code{Theta_0}.}
+\item{k0}{The number of cell types whose cell-type level expression we have prior knowledge about in \code{Theta_0}.}
 
-\item{meds}{the vector of median cell proportions in the population.}
+\item{meds}{The vector of median cell proportions in the population.}
 
-\item{ranges}{the vector of the range interval lengths of proportions of different cell types.}
+\item{ranges}{The vector of the range interval lengths of proportions of different cell types.}
 
-\item{alpha1}{the tuning parameter for regularizing the part of Theta with prior knowledge.}
+\item{alpha1}{The tuning parameter for regularizing the part of Theta with prior knowledge.}
 
-\item{alpha2}{the tuning parameter for regularizing the part of Theta without prior knowledge.}
+\item{alpha2}{The tuning parameter for regularizing the part of Theta without prior knowledge.}
 
-\item{beta}{the tuning parameter for regularizing P.}
+\item{beta}{The tuning parameter for regularizing P.}
 
-\item{max_iter}{the maximal number of iterations this core function will run. The default is \code{1e5}.}
+\item{max_iter}{The maximal number of iterations this core function will run. The default is \code{1e5}.}
 
-\item{tol}{the tolerance parameter for the convergence criterion of ARTdeConv. The default is \code{1e-5}.}
+\item{tol}{The tolerance parameter for the convergence criterion of ARTdeConv. The default is \code{1e-5}.}
+}
+\value{
+A list with the following items:
+\itemize{
+\item Y_hat: the estimated bulk expression from deconvolution;
+\item Theta_hat: the estimated signature matrix from deconvolution;
+\item s_hat: the vector of estimated mRNA amounts;
+\item P_hat: the estimated proportion (the results of primary interests);
+\item res_v: the vector of bulk expression residuals after each iteration;
+\item obj_v: the vector of objective function values after each iteration;
+\item fixed_s: the indicator of whether the mRNA amount vector is fixed to be 1 for all cell types;
+\item weights: the indicator of whether adaptive penalization is used;
+\item n_iter: the number of iterations the algorithm has run.
+}
 }
 \description{
 This is the core function that will run ARTdeConv once under a set of initial values, but with the legacy bi-factor assumption (that the scale matrix S is fixed).
