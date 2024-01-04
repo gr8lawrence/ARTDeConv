@@ -102,6 +102,8 @@ colnames(P_hat) = colnames(Y)
 P_hat
 ```
 
+> Note: `P_hat` is returned as a **matrix object** by ARTdeConv. Consider transforming it to a `data.frame` or `tibble` if more data manipulation or analysis is needed. 
+
 ## More Resources
 
 More vignettes are under development.
