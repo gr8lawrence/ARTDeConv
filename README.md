@@ -32,7 +32,7 @@ Using the notation of the, we have the following dimension parameters:
  * $K$: 5 (the total number of cell types);
  * $K_0$: 4 (the number of cell types whose gene signature expression are known);
  
-ARTdeConv requires the rows of the bulk matrix match those of the gene signature matrix (which is already satisfied in the processed data). It also requires the input signature matrix contains $K$ columns for all $K$ cell types, with the $K_0$ cell types with gene signature expression occupying the first $K_0$ columns, and the rest of the columns padded with 0. To meet this requirement, we pre-process the data:
+ARTdeConv requires the rows of the bulk matrix match those of the gene signature matrix (which is already satisfied in the processed data). It also requires the input signature matrix contains $K$ columns for all $K$ cell types, with the first $K_0$ columns occupied by the $K_0$ cell types with known gene signature expression and the rest of the columns padded with 0. To meet this requirement, we pre-process the data:
 
 ```R
 ## extract the bulk and gene signature expression
