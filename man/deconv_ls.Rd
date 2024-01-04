@@ -9,7 +9,7 @@ an object of class \code{"list"} that contains 4 fields: \code{bulk_mat}, \code{
 \code{R}, corresponding to the bulk expression matrix, the signature matrix, the proportion mean values, and the proportion range values.
 }
 \usage{
-deconv_ls
+load(deconv_ls)
 }
 \description{
 This example contains processed PBMC bulk expression and gene signature matrices for four major cell types

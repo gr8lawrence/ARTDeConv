@@ -6,7 +6,7 @@
 #' 
 #' @docType data
 #' 
-#' @usage deconv_ls
+#' @usage load(deconv_ls)
 #' 
 #' @format an object of class \code{"list"} that contains 4 fields: \code{bulk_mat}, \code{sig_mat}, \code{M} and
 #'  \code{R}, corresponding to the bulk expression matrix, the signature matrix, the proportion mean values, and the proportion range values.
