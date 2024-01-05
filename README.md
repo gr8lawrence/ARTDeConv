@@ -26,7 +26,7 @@ library(ARTdeConv)
 deconv_ls
 ```
 
-To start the deconvolution, we require three elements from the schema: bulk expression (`deconv_ls$bulk_mat`), gene signature expression (`deconv_ls$bulk_mat`), and means and ranges of cell types (`deconv_ls$M` and `deconv_ls$R`). Following the analysis in Section 3.2 of the ARTdeConv paper, we introduce an additional "cell type", named "others", which encompasses all unmeasured cell types.
+To start the deconvolution, we require three elements from the schema: bulk expression (`deconv_ls$bulk_mat`), gene signature expression (`deconv_ls$sig_mat`), and means and ranges of cell types (`deconv_ls$M` and `deconv_ls$R`). Following the analysis in Section 3.2 of the ARTdeConv paper, we introduce an additional "cell type", named "others", which encompasses all unmeasured cell types.
 
 Using the notation of the, we have the following dimension parameters:
 
@@ -40,7 +40,7 @@ ARTdeConv requires that the rows of the bulk matrix correspond to those of the g
 ```R
 ## extract the bulk and gene signature expression
 Y = deconv_ls$bulk_mat
-Theta = deconv_ls$bulk_mat
+Theta = deconv_ls$sig_mat
 nrow(Y) == nrow(Theta)
 all.equal(rownames(Y), rownames(Theta)) # verify the matching rows
 ```
