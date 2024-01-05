@@ -28,12 +28,12 @@ deconv_ls
 
 To start the deconvolution, we require three elements from the schema: bulk expression (`deconv_ls$bulk_mat`), gene signature expression (`deconv_ls$sig_mat`), and means and ranges of cell types (`deconv_ls$M` and `deconv_ls$R`). Following the analysis in Section 3.2 of the ARTdeConv paper, we introduce an additional "cell type", named "others", which encompasses all unmeasured cell types.
 
-Using the notation of the, we have the following dimension parameters:
+Using the notation from the ARTdeConv paper, we can express the dataset sizes as follows:
 
- * $m$: 73 (the number of gene signatures);
- * $n$: 8 (the number of samples);
- * $K$: 5 (the total number of cell types);
- * $K_0$: 4 (the number of cell types whose gene signature expression are known);
+  *  $m$: 73 (the number of gene signatures)
+  *  $n$: 8 (the number of samples)
+  *  $K$: 5 (the total number of cell types)
+  *  $K_0$: 4 (the number of cell types with known gene signature expressions)
  
 ARTdeConv requires that the rows of the bulk matrix correspond to those of the gene signature matrix in terms of gene features (a condition already met in the attached processed data, as shown below): 
 
