@@ -18,7 +18,7 @@ install_github("https://github.com/gr8lawrence/ARTDeConv", dependencies = TRUE)
 
 ## Quick Start
 
-At the top, a schematic of the algorithm is available. To begin using the ARTdeConv package, an example dataset is provided, comprising bulk expression data from 8 human Peripheral Blood Mononuclear Cell (PBMC) samples from 2 subjects (HD30, HD31) across 4 time points (Day 0, 1, 3, 7). The dataset also contains a matrix of gene signatures for 4 major PBMC cell types (T cell, B cell, monocyte, dendritic cell), along with pre-calculated means and ranges for these cell types. These data are sourced or derived from the published studies of Hoek et al. (2015) and Kleiveland et al. (2015).
+At the top, a schematic of the algorithm is available. To begin using the ARTdeConv package, an example dataset is provided, comprising bulk expression data from 8 human Peripheral Blood Mononuclear Cell (PBMC) samples from 2 subjects (HD30, HD31) across 4 time points (Day 0, 1, 3, 7). The dataset also contains a matrix of gene signatures for 4 major PBMC cell types (T cell, B cell, monocyte, dendritic cell), along with pre-calculated means and ranges for these cell types. These data are sourced or derived from the published studies of Hoek et al. (2015) and Kleiveland (2015).
 
 After installing the package, the attached data can be viewed (as a list object)
 ```R
@@ -114,7 +114,7 @@ To cite ARTdeConv, please use:
 
 Liu, Tianyi, Quefeng Li, Xiaojing Zheng, and Fei Zou. 2023. “Adaptive Regularized Tri-Factor Non-Negative Matrix Factorization for Cell Type Deconvolution.” *bioRxiv*. https://doi.org/10.1101/2023.12.07.570631.
 
-To cite the works of Hoek et al. and Kleiveland et al., please use:
+To cite the works of Hoek et al. and Kleiveland, please use:
 
 Hoek, Kristen L., Parimal Samir, Leigh M. Howard, Xinnan Niu, Nripesh Prasad, Allison Galassie, Qi Liu, et al. 2015. “A Cell-Based Systems Biology Assessment of Human Blood to Monitor Immune Responses after Influenza Vaccination.” *PloS One* 10 (2): e0118528.
 
